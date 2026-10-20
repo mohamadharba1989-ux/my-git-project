@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منظومة إدارة المستودع والمخزون | Deposito UI</title>
+    <title>منظومة مستودع نجها - إدارة المخزون وتخمير الموز</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons CDN -->
@@ -14,6 +14,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Cairo', sans-serif; }
+        .tab-btn.active {
+            background-color: #f59e0b;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+        }
     </style>
 </head>
 <body class="bg-[#f4f7fb] text-slate-800 antialiased min-h-screen flex flex-col justify-between">
@@ -26,296 +31,375 @@
                     D
                 </div>
                 <div>
-                    <h1 class="text-lg font-extrabold text-slate-900 tracking-tight leading-none">مستودع نجها</h1>
-                    <span class="text-xs text-slate-400 font-semibold">إدارة المخزون وتخمير الموز</span>
+                    <h1 class="text-lg font-black text-slate-900 tracking-tight leading-none">مستودع نجها</h1>
+                    <span class="text-xs text-slate-500 font-bold">إدارة المخزون والتبريد</span>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2 sm:gap-4">
-                <div class="relative hidden md:block w-72">
-                    <input type="text" placeholder="بحث عن حاوية، صنف، أو حركة..." class="w-full bg-slate-100 border-none rounded-xl py-2 pr-9 pl-4 text-xs font-medium focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all">
-                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute top-2.5 right-3"></i>
-                </div>
-                <button class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition-colors relative">
-                    <i data-lucide="bell" class="w-4 h-4"></i>
-                    <span class="w-2 h-2 rounded-full bg-red-500 absolute top-2 left-2"></span>
+            <!-- Navigation Tabs -->
+            <nav class="hidden md:flex items-center gap-2 bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
+                <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn active px-4 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> لوحة التحكم
                 </button>
-                <div class="flex items-center gap-2 pr-2 border-r border-slate-200">
-                    <div class="w-9 h-9 rounded-full bg-slate-800 text-amber-400 font-bold flex items-center justify-center text-xs">
-                        MH
-                    </div>
+                <button onclick="switchTab('movement')" id="tab-movement" class="tab-btn px-4 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition-all flex items-center gap-1.5">
+                    <i data-lucide="arrow-left-right" class="w-4 h-4"></i> حركة المستودع
+                </button>
+                <button onclick="switchTab('chambers')" id="tab-chambers" class="tab-btn px-4 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition-all flex items-center gap-1.5">
+                    <i data-lucide="boxes" class="w-4 h-4"></i> قاعات التخمير (6)
+                </button>
+            </nav>
+
+            <!-- Admin Controls -->
+            <div class="flex items-center gap-3">
+                <div id="adminBadge" class="hidden items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-xl text-xs font-bold border border-emerald-200">
+                    <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i> مسؤول المستودع
                 </div>
+                <button id="adminLoginBtn" onclick="toggleAdminModal(true)" class="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm">
+                    <i data-lucide="lock" class="w-3.5 h-3.5 text-amber-400"></i> دخول المسؤول
+                </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Content Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-6">
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-6 flex-1">
 
-        <!-- Top Statistics KPI Cards -->
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-            <!-- Card 1 -->
-            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
-                <div class="flex items-center justify-between text-slate-400">
-                    <span class="text-xs font-bold">الرصيد الكلي</span>
-                    <i data-lucide="package" class="w-4 h-4 text-blue-500"></i>
-                </div>
-                <div class="mt-2">
-                    <h3 class="text-xl font-black text-slate-900">15,871</h3>
-                    <p class="text-[11px] text-emerald-600 font-bold mt-0.5">طرد مخزن</p>
-                </div>
-            </div>
-
-            <!-- Card 2 -->
-            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
-                <div class="flex items-center justify-between text-slate-400">
-                    <span class="text-xs font-bold">المباع / التوزيع</span>
-                    <i data-lucide="truck" class="w-4 h-4 text-amber-500"></i>
-                </div>
-                <div class="mt-2">
-                    <h3 class="text-xl font-black text-slate-900">2,453</h3>
-                    <p class="text-[11px] text-slate-500 font-semibold mt-0.5">طرد اليوم</p>
-                </div>
-            </div>
-
-            <!-- Card 3 -->
-            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
-                <div class="flex items-center justify-between text-slate-400">
-                    <span class="text-xs font-bold">الوارد الجديد</span>
-                    <i data-lucide="download" class="w-4 h-4 text-emerald-500"></i>
-                </div>
-                <div class="mt-2">
-                    <h3 class="text-xl font-black text-slate-900">3,432</h3>
-                    <p class="text-[11px] text-emerald-600 font-bold mt-0.5">+2 حاوية</p>
-                </div>
-            </div>
-
-            <!-- Card 4 -->
-            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
-                <div class="flex items-center justify-between text-slate-400">
-                    <span class="text-xs font-bold">توالف وكسر</span>
-                    <i data-lucide="alert-triangle" class="w-4 h-4 text-red-500"></i>
-                </div>
-                <div class="mt-2">
-                    <h3 class="text-xl font-black text-slate-900">12</h3>
-                    <p class="text-[11px] text-red-500 font-bold mt-0.5">نسبة منخفضة</p>
-                </div>
-            </div>
-
-            <!-- Card 5 -->
-            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
-                <div class="flex items-center justify-between text-slate-400">
-                    <span class="text-xs font-bold">طبالي فارغة</span>
-                    <i data-lucide="layers" class="w-4 h-4 text-indigo-500"></i>
-                </div>
-                <div class="mt-2">
-                    <h3 class="text-xl font-black text-slate-900">420</h3>
-                    <p class="text-[11px] text-slate-500 font-semibold mt-0.5">طبلية خشب</p>
-                </div>
-            </div>
-
-            <!-- Card 6 -->
-            <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
-                <div class="flex items-center justify-between text-slate-400">
-                    <span class="text-xs font-bold">قاعات نشطة</span>
-                    <i data-lucide="thermometer-snowflake" class="w-4 h-4 text-cyan-500"></i>
-                </div>
-                <div class="mt-2">
-                    <h3 class="text-xl font-black text-slate-900">4 / 6</h3>
-                    <p class="text-[11px] text-cyan-600 font-bold mt-0.5">قيد التخمير</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Middle Section: Visual Warehouse Map & Occupancy -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            
-            <!-- Left: Occupancy Gauge Card (4 Columns) -->
-            <div class="lg:col-span-4 bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm flex flex-col items-center justify-between">
-                <div class="w-full flex items-center justify-between border-b border-slate-100 pb-3">
-                    <h3 class="font-bold text-slate-800 text-sm">إشغال المستودع العام</h3>
-                    <span class="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-bold">سعة مثالية</span>
-                </div>
-
-                <!-- Donut Chart Canvas -->
-                <div class="relative w-48 h-48 my-4 flex items-center justify-center">
-                    <canvas id="occupancyChart"></canvas>
-                    <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                        <span class="text-3xl font-black text-slate-900">58%</span>
-                        <span class="text-[11px] text-slate-400 font-bold">نسبة الامتلاء</span>
+        <!-- TAB 1: DASHBOARD -->
+        <div id="section-dashboard" class="space-y-6">
+            <!-- Top KPI Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <span class="text-xs font-bold text-slate-500">الرصيد الكلي</span>
+                    <div class="mt-2">
+                        <h3 id="statTotalStock" class="text-xl font-black text-slate-900">10,274</h3>
+                        <p class="text-[11px] text-emerald-600 font-bold mt-0.5">طرد مخزن</p>
                     </div>
                 </div>
-
-                <div class="w-full grid grid-cols-2 gap-2 text-center pt-3 border-t border-slate-100">
-                    <div class="p-2 rounded-xl bg-slate-50">
-                        <span class="text-[11px] text-slate-400 block font-semibold">مواقع مشغولة</span>
-                        <span class="text-sm font-black text-slate-800">64 رف / قاعة</span>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <span class="text-xs font-bold text-slate-500">الوارد اليومي</span>
+                    <div class="mt-2">
+                        <h3 id="statTodayIn" class="text-xl font-black text-slate-900">0</h3>
+                        <p class="text-[11px] text-emerald-600 font-bold mt-0.5">طرد جديد</p>
                     </div>
-                    <div class="p-2 rounded-xl bg-slate-50">
-                        <span class="text-[11px] text-slate-400 block font-semibold">مواقع شاغرة</span>
-                        <span class="text-sm font-black text-emerald-600">19 رف / قاعة</span>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <span class="text-xs font-bold text-slate-500">المباع / التوزيع</span>
+                    <div class="mt-2">
+                        <h3 id="statTodayOut" class="text-xl font-black text-slate-900">0</h3>
+                        <p class="text-[11px] text-slate-500 font-bold mt-0.5">طرد مسحوب</p>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <span class="text-xs font-bold text-slate-500">توالف وكسر</span>
+                    <div class="mt-2">
+                        <h3 class="text-xl font-black text-slate-900">0</h3>
+                        <p class="text-[11px] text-red-500 font-bold mt-0.5">سليم</p>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <span class="text-xs font-bold text-slate-500">طبالي خشب</span>
+                    <div class="mt-2">
+                        <h3 class="text-xl font-black text-slate-900">320</h3>
+                        <p class="text-[11px] text-indigo-600 font-bold mt-0.5">طبلية جاهزة</p>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <span class="text-xs font-bold text-slate-500">قاعات نشطة</span>
+                    <div class="mt-2">
+                        <h3 class="text-xl font-black text-slate-900">4 / 6</h3>
+                        <p class="text-[11px] text-cyan-600 font-bold mt-0.5">تحت التخمير</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Right: Warehouse Interactive Rack / Bay Map (8 Columns) -->
-            <div class="lg:col-span-8 bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                    <div>
-                        <h3 class="font-bold text-slate-800 text-sm">مخطط إشغال القاعات والرفوف (Layout)</h3>
-                        <p class="text-xs text-slate-400">توزيع الطرود والقاعات الممتلئة والشاغرة</p>
+            <!-- Middle Section: 6 Chambers Layout + Occupancy -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- 6 Chambers Section (8 Cols) -->
+                <div class="lg:col-span-8 bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <div>
+                            <h3 class="font-extrabold text-slate-800 text-sm">مخطط إشغال قاعات التخمير والتبريد</h3>
+                            <p class="text-xs text-slate-400">مستودع نجها - 6 قاعات معزولة</p>
+                        </div>
+                        <div class="flex items-center gap-3 text-xs">
+                            <span class="flex items-center gap-1.5 font-bold text-slate-600"><span class="w-3 h-3 rounded bg-amber-400"></span> مشغولة (تخمير)</span>
+                            <span class="flex items-center gap-1.5 font-bold text-slate-600"><span class="w-3 h-3 rounded bg-slate-200"></span> شاغرة</span>
+                        </div>
                     </div>
-                    <!-- Legend -->
-                    <div class="flex items-center gap-3 text-xs">
-                        <span class="flex items-center gap-1.5 text-slate-600 font-bold">
-                            <span class="w-3 h-3 rounded bg-amber-400 inline-block"></span> مشغولة
-                        </span>
-                        <span class="flex items-center gap-1.5 text-slate-600 font-bold">
-                            <span class="w-3 h-3 rounded bg-slate-200 inline-block"></span> شاغرة
-                        </span>
+
+                    <!-- Exact 6 Chambers Grid -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 py-4">
+                        <!-- قاعة 1 -->
+                        <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex flex-col justify-between">
+                            <div class="flex justify-between items-center">
+                                <span class="font-black text-sm text-slate-900">قاعة رقم 1</span>
+                                <span class="text-[10px] font-bold bg-amber-200 text-amber-900 px-2 py-0.5 rounded-lg">مشغولة</span>
+                            </div>
+                            <div class="mt-3 text-xs space-y-1">
+                                <p class="text-slate-600 font-bold">الصنف: روزيتا 20كغ</p>
+                                <p class="text-slate-500">الكمية: 1,800 طرد</p>
+                                <p class="text-cyan-700 font-mono font-bold">+15.5°C | غاز C2H4</p>
+                            </div>
+                        </div>
+
+                        <!-- قاعة 2 -->
+                        <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex flex-col justify-between">
+                            <div class="flex justify-between items-center">
+                                <span class="font-black text-sm text-slate-900">قاعة رقم 2</span>
+                                <span class="text-[10px] font-bold bg-amber-200 text-amber-900 px-2 py-0.5 rounded-lg">مشغولة</span>
+                            </div>
+                            <div class="mt-3 text-xs space-y-1">
+                                <p class="text-slate-600 font-bold">الصنف: بانا غولد</p>
+                                <p class="text-slate-500">الكمية: 1,600 طرد</p>
+                                <p class="text-cyan-700 font-mono font-bold">+14.0°C | تهوية</p>
+                            </div>
+                        </div>
+
+                        <!-- قاعة 3 -->
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-dashed border-slate-300 flex flex-col justify-between">
+                            <div class="flex justify-between items-center">
+                                <span class="font-black text-sm text-slate-700">قاعة رقم 3</span>
+                                <span class="text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-lg">شاغرة</span>
+                            </div>
+                            <div class="mt-3 text-xs text-slate-400">
+                                جاهزة لاستقبال حاوية جديدة
+                            </div>
+                        </div>
+
+                        <!-- قاعة 4 -->
+                        <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex flex-col justify-between">
+                            <div class="flex justify-between items-center">
+                                <span class="font-black text-sm text-slate-900">قاعة رقم 4</span>
+                                <span class="text-[10px] font-bold bg-amber-200 text-amber-900 px-2 py-0.5 rounded-lg">مشغولة</span>
+                            </div>
+                            <div class="mt-3 text-xs space-y-1">
+                                <p class="text-slate-600 font-bold">الصنف: ديلمونتي</p>
+                                <p class="text-slate-500">الكمية: 1,750 طرد</p>
+                                <p class="text-cyan-700 font-mono font-bold">+16.0°C | يوم 3</p>
+                            </div>
+                        </div>
+
+                        <!-- قاعة 5 -->
+                        <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 flex flex-col justify-between">
+                            <div class="flex justify-between items-center">
+                                <span class="font-black text-sm text-slate-900">قاعة رقم 5</span>
+                                <span class="text-[10px] font-bold bg-amber-200 text-amber-900 px-2 py-0.5 rounded-lg">مشغولة</span>
+                            </div>
+                            <div class="mt-3 text-xs space-y-1">
+                                <p class="text-slate-600 font-bold">الصنف: كوستا سول</p>
+                                <p class="text-slate-500">الكمية: 1,500 طرد</p>
+                                <p class="text-cyan-700 font-mono font-bold">+14.5°C | تبريد</p>
+                            </div>
+                        </div>
+
+                        <!-- قاعة 6 -->
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-dashed border-slate-300 flex flex-col justify-between">
+                            <div class="flex justify-between items-center">
+                                <span class="font-black text-sm text-slate-700">قاعة رقم 6</span>
+                                <span class="text-[10px] font-bold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-lg">شاغرة</span>
+                            </div>
+                            <div class="mt-3 text-xs text-slate-400">
+                                جاهزة للتشغيل
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Grid of Pallets / Racks -->
-                <div class="py-6 grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 gap-2.5">
-                    <!-- Racks (Simulated dynamic grid) -->
-                    <div class="h-10 rounded-xl bg-amber-400/90 shadow-sm flex items-center justify-center text-[11px] font-bold text-slate-900" title="قاعة 1 - روزيتا">A1</div>
-                    <div class="h-10 rounded-xl bg-amber-400/90 shadow-sm flex items-center justify-center text-[11px] font-bold text-slate-900" title="قاعة 1 - روزيتا">A2</div>
-                    <div class="h-10 rounded-xl bg-amber-400/90 shadow-sm flex items-center justify-center text-[11px] font-bold text-slate-900" title="قاعة 1 - روزيتا">A3</div>
-                    <div class="h-10 rounded-xl bg-slate-150 bg-slate-100 border border-dashed border-slate-300 flex items-center justify-center text-[11px] font-bold text-slate-400">A4</div>
-                    <div class="h-10 rounded-xl bg-amber-400/90 shadow-sm flex items-center justify-center text-[11px] font-bold text-slate-900">B1</div>
-                    <div class="h-10 rounded-xl bg-amber-400/90 shadow-sm flex items-center justify-center text-[11px] font-bold text-slate-900">B2</div>
-                    <div class="h-10 rounded-xl bg-amber-400/90 shadow-sm flex items-center justify-center text-[11px] font-bold text-slate-900">B3</div>
-                    <div class="h-10 rounded-xl bg-amber-400/90 shadow-sm flex items-center justify-center text-[11px] font-bold text-slate-900">B4</div>
-                    <div class="h-10 rounded-xl bg-slate-100 border border-dashed border-slate-300 flex items-center justify-center text-[11px] font-bold text-slate-400">C1</div>
-                    <div class="h-10 rounded-xl bg-slate-100 border border-dashed border-slate-300 flex items-center justify-center text-[11px] font-bold text-slate-400">C2</div>
+                <!-- Donut Chart (4 Cols) -->
+                <div class="lg:col-span-4 bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex flex-col items-center justify-between">
+                    <div class="w-full flex items-center justify-between border-b border-slate-100 pb-3">
+                        <h3 class="font-extrabold text-slate-800 text-sm">إشغال سعة المستودع</h3>
+                        <span class="text-xs bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-full font-bold">4 قاعات ممتلئة</span>
+                    </div>
 
-                    <div class="h-10 rounded-xl bg-amber-400/90 shadow-sm flex items-center justify-center text-[11px] font-bold text-slate-900">C3</div>
-                    <div class="h-10 rounded-xl bg-amber-400/90 shadow-sm flex items-center justify-center text-[11px] font-bold text-slate-900">C4</div>
-                    <div class="h-10 rounded-xl bg-amber-400/90 shadow-sm flex items-center justify-center text-[11px] font-bold text-slate-900">D1</div>
-                    <div class="h-10 rounded-xl bg-amber-400/90 shadow-sm flex items-center justify-center text-[11px] font-bold text-slate-900">D2</div>
-                    <div class="h-10 rounded-xl bg-slate-100 border border-dashed border-slate-300 flex items-center justify-center text-[11px] font-bold text-slate-400">D3</div>
-                    <div class="h-10 rounded-xl bg-amber-400/90 shadow-sm flex items-center justify-center text-[11px] font-bold text-slate-900">D4</div>
-                    <div class="h-10 rounded-xl bg-amber-400/90 shadow-sm flex items-center justify-center text-[11px] font-bold text-slate-900">E1</div>
-                    <div class="h-10 rounded-xl bg-amber-400/90 shadow-sm flex items-center justify-center text-[11px] font-bold text-slate-900">E2</div>
-                    <div class="h-10 rounded-xl bg-slate-100 border border-dashed border-slate-300 flex items-center justify-center text-[11px] font-bold text-slate-400">E3</div>
-                    <div class="h-10 rounded-xl bg-slate-100 border border-dashed border-slate-300 flex items-center justify-center text-[11px] font-bold text-slate-400">E4</div>
-                </div>
+                    <div class="relative w-44 h-44 my-2 flex items-center justify-center">
+                        <canvas id="occupancyChart"></canvas>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                            <span class="text-3xl font-black text-slate-900">66%</span>
+                            <span class="text-[11px] text-slate-400 font-bold">نسبة الامتلاء</span>
+                        </div>
+                    </div>
 
-                <div class="flex items-center justify-between text-xs text-slate-500 pt-3 border-t border-slate-100 font-medium">
-                    <span>موقع التخزين: جناح A و B (تبريد رئيسي)</span>
-                    <button class="text-amber-600 font-bold hover:underline">عرض الخريطة التفصيلية ←</button>
+                    <div class="w-full grid grid-cols-2 gap-2 text-center pt-3 border-t border-slate-100">
+                        <div class="p-2 rounded-xl bg-slate-50">
+                            <span class="text-[11px] text-slate-400 block font-bold">قاعات مشغولة</span>
+                            <span class="text-sm font-black text-slate-800">4 قاعات</span>
+                        </div>
+                        <div class="p-2 rounded-xl bg-slate-50">
+                            <span class="text-[11px] text-slate-400 block font-bold">قاعات شاغرة</span>
+                            <span class="text-sm font-black text-emerald-600">2 قاعة</span>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-        </div>
-
-        <!-- Bottom Section: Brand Stock Bar Chart & Recent Activity -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            
-            <!-- Brands Stock Chart (8 Columns) -->
-            <div class="lg:col-span-8 bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm">
+            <!-- Stock Distribution Bar Chart -->
+            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="font-bold text-slate-800 text-sm">توزيع رصيد الأصناف والماركات (طرود)</h3>
-                    <span class="text-xs text-slate-400">تحديث آلي</span>
+                    <h3 class="font-extrabold text-slate-800 text-sm">توزيع رصيد الأصناف والماركات</h3>
+                    <span class="text-xs text-slate-400 font-bold">مستودع نجها</span>
                 </div>
                 <div class="h-64">
                     <canvas id="stockChart"></canvas>
                 </div>
             </div>
+        </div>
 
-            <!-- Fast Actions / Container Status (4 Columns) -->
-            <div class="lg:col-span-4 bg-white p-5 rounded-3xl border border-slate-200/80 shadow-sm flex flex-col justify-between">
-                <div>
-                    <h3 class="font-bold text-slate-800 text-sm mb-3">حالة الحاويات في الميناء / الطريق</h3>
-                    <div class="space-y-3">
-                        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                            <div>
-                                <span class="font-bold text-slate-800 text-xs block">حاوية #145276 (روزيتا)</span>
-                                <span class="text-[11px] text-slate-400">حرارة الضخ: +13.3°C</span>
-                            </div>
-                            <span class="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-lg">جاهزة للفحص</span>
-                        </div>
-                        <div class="p-3 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-between">
-                            <div>
-                                <span class="font-bold text-slate-800 text-xs block">حاوية #982103 (ديلمونتي)</span>
-                                <span class="text-[11px] text-slate-400">في مستودع الميناء</span>
-                            </div>
-                            <span class="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-lg">قيد التخليص</span>
-                        </div>
+        <!-- TAB 2: WAREHOUSE MOVEMENT & INVENTORY TABLE -->
+        <div id="section-movement" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-100">
+                    <div>
+                        <h2 class="text-lg font-black text-slate-900">حركة المستودع والأرصدة</h2>
+                        <p class="text-xs text-slate-500 font-semibold">سجل الوارد والصادر وتتبع الأرصدة الحالية لكل صنف</p>
+                    </div>
+                    <!-- Action Buttons (Enabled when Admin) -->
+                    <div class="flex items-center gap-2">
+                        <button onclick="openInspectionModal()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center gap-1.5">
+                            <i data-lucide="clipboard-check" class="w-4 h-4"></i> فحص استلام حاوية
+                        </button>
+                        <button id="addMovementBtn" onclick="openMovementModal()" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center gap-1.5">
+                            <i data-lucide="plus" class="w-4 h-4"></i> تسجيل حركة وارد / صادر
+                        </button>
                     </div>
                 </div>
 
-                <div class="pt-4 border-t border-slate-100">
-                    <button class="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2">
-                        <i data-lucide="plus-circle" class="w-4 h-4 text-amber-400"></i>
-                        تسجيل حركة أو فحص جديد
-                    </button>
+                <!-- Responsive Table -->
+                <div class="overflow-x-auto mt-4">
+                    <table class="w-full text-right text-xs">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 font-black border-b border-slate-200">
+                                <th class="p-3.5">الصنف / الماركة</th>
+                                <th class="p-3.5">الوزن</th>
+                                <th class="p-3.5 text-blue-600">رصيد البداية</th>
+                                <th class="p-3.5 text-emerald-600">الوارد</th>
+                                <th class="p-3.5 text-amber-600">المباع / الصادر</th>
+                                <th class="p-3.5 text-red-600">توالف</th>
+                                <th class="p-3.5 text-slate-900 font-bold">الرصيد المتبقي</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTableBody" class="divide-y divide-slate-100 font-bold">
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="p-3.5 text-slate-900">روزيتا</td>
+                                <td class="p-3.5 text-slate-500 font-normal">20 كغ</td>
+                                <td class="p-3.5 text-blue-600">5,002</td>
+                                <td class="p-3.5 text-emerald-600">0</td>
+                                <td class="p-3.5 text-amber-600">0</td>
+                                <td class="p-3.5 text-red-600">0</td>
+                                <td class="p-3.5 text-slate-900 font-extrabold text-sm">5,002</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="p-3.5 text-slate-900">بانا غولد</td>
+                                <td class="p-3.5 text-slate-500 font-normal">-</td>
+                                <td class="p-3.5 text-blue-600">3,042</td>
+                                <td class="p-3.5 text-emerald-600">0</td>
+                                <td class="p-3.5 text-amber-600">0</td>
+                                <td class="p-3.5 text-red-600">0</td>
+                                <td class="p-3.5 text-slate-900 font-extrabold text-sm">3,042</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="p-3.5 text-slate-900">ديلمونتي</td>
+                                <td class="p-3.5 text-slate-500 font-normal">19 كغ</td>
+                                <td class="p-3.5 text-blue-600">865</td>
+                                <td class="p-3.5 text-emerald-600">0</td>
+                                <td class="p-3.5 text-amber-600">0</td>
+                                <td class="p-3.5 text-red-600">0</td>
+                                <td class="p-3.5 text-slate-900 font-extrabold text-sm">865</td>
+                            </tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
+                                <td class="p-3.5 text-slate-900">ديلمونتي</td>
+                                <td class="p-3.5 text-slate-500 font-normal">16 كغ</td>
+                                <td class="p-3.5 text-blue-600">1,365</td>
+                                <td class="p-3.5 text-emerald-600">0</td>
+                                <td class="p-3.5 text-amber-600">0</td>
+                                <td class="p-3.5 text-red-600">0</td>
+                                <td class="p-3.5 text-slate-900 font-extrabold text-sm">1,365</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="bg-amber-50/50 text-slate-900 font-black border-t-2 border-amber-200">
+                                <td class="p-3.5">المجموع</td>
+                                <td class="p-3.5">-</td>
+                                <td class="p-3.5 text-blue-700">10,274</td>
+                                <td class="p-3.5 text-emerald-700">0</td>
+                                <td class="p-3.5 text-amber-700">0</td>
+                                <td class="p-3.5 text-red-700">0</td>
+                                <td class="p-3.5 text-slate-900 font-black text-sm">10,274</td>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
             </div>
-
         </div>
 
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-white border-t border-slate-200 py-4 text-center">
-        <p dir="ltr" class="text-xs text-slate-400 font-mono">
-            Deposito Admin Dashboard &copy; 2026
-        </p>
-    </footer>
-
-    <!-- Initialize Charts and Icons -->
-    <script>
-        // Lucide Icons
-        lucide.createIcons();
-
-        // 1. Donut Occupancy Chart
-        const ctxDonut = document.getElementById('occupancyChart').getContext('2d');
-        new Chart(ctxDonut, {
-            type: 'doughnut',
-            data: {
-                datasets: [{
-                    data: [58, 42],
-                    backgroundColor: ['#10b981', '#f1f5f9'],
-                    borderWidth: 0,
-                    circumference: 360,
-                    cutout: '78%'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false }, tooltip: { enabled: false } }
-            }
-        });
-
-        // 2. Stock Brands Bar Chart
-        const ctxBar = document.getElementById('stockChart').getContext('2d');
-        new Chart(ctxBar, {
-            type: 'bar',
-            data: {
-                labels: ['روزيتا', 'بانا غولد', 'ديلمونتي', 'إكسترا بان', 'اكسبان', 'كوستا سول'],
-                datasets: [{
-                    label: 'الرصيد المتاح (طرد)',
-                    data: [5002, 3042, 2229, 1420, 1180, 2998],
-                    backgroundColor: '#fbbf24',
-                    borderRadius: 8,
-                    barThickness: 28
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { font: { family: 'Cairo' } } },
-                    x: { grid: { display: false }, ticks: { font: { family: 'Cairo', weight: 'bold' } } }
-                },
-                plugins: {
-                    legend: { display: false }
-                }
-            }
-        });
-    </script>
-</body>
-</html>
+        <!-- TAB 3: CHAMBERS DETAILS -->
+        <div id="section-chambers" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                <h2 class="text-lg font-black text-slate-900 mb-1">تفاصيل ومؤشرات قاعات التخمير (1 إلى 6)</h2>
+                <p class="text-xs text-slate-500 mb-6">متابعة درجات الحرارة وبروتوكولات التخمير والغازات</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <!-- Cards for each chamber -->
+                    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-black text-base text-slate-900">القاعة 1 (مشغولة)</span>
+                            <span class="px-2.5 py-1 bg-amber-100 text-amber-800 text-[11px] font-bold rounded-lg">يوم 2 - غاز</span>
+                        </div>
+                        <div class="text-xs space-y-1 text-slate-600">
+                            <div>ماركة الموز: <span class="font-bold text-slate-900">روزيتا</span></div>
+                            <div>الكمية: <span class="font-bold text-slate-900">1,800 كرتونة</span></div>
+                            <div>حرارة اللب: <span class="font-bold text-purple-600">+15.5°C</span></div>
+                            <div>التهوية: <span class="font-bold text-emerald-600">مغلقة</span></div>
+                        </div>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-black text-base text-slate-900">القاعة 2 (مشغولة)</span>
+                            <span class="px-2.5 py-1 bg-amber-100 text-amber-800 text-[11px] font-bold rounded-lg">يوم 4 - تهوية</span>
+                        </div>
+                        <div class="text-xs space-y-1 text-slate-600">
+                            <div>ماركة الموز: <span class="font-bold text-slate-900">بانا غولد</span></div>
+                            <div>الكمية: <span class="font-bold text-slate-900">1,600 كرتونة</span></div>
+                            <div>حرارة اللب: <span class="font-bold text-purple-600">+14.0°C</span></div>
+                            <div>التهوية: <span class="font-bold text-emerald-600">مفتوحة (طرد CO2)</span></div>
+                        </div>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-black text-base text-slate-700">القاعة 3 (شاغرة)</span>
+                            <span class="px-2.5 py-1 bg-slate-200 text-slate-700 text-[11px] font-bold rounded-lg">جاهزة</span>
+                        </div>
+                        <div class="text-xs text-slate-400 py-4 text-center">
+                            القاعة نظيفة ومعقمة وجاهزة للتحميل
+                        </div>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-black text-base text-slate-900">القاعة 4 (مشغولة)</span>
+                            <span class="px-2.5 py-1 bg-amber-100 text-amber-800 text-[11px] font-bold rounded-lg">يوم 3 - تبريد</span>
+                        </div>
+                        <div class="text-xs space-y-1 text-slate-600">
+                            <div>ماركة الموز: <span class="font-bold text-slate-900">ديلمونتي</span></div>
+                            <div>الكمية: <span class="font-bold text-slate-900">1,750 كرتونة</span></div>
+                            <div>حرارة اللب: <span class="font-bold text-purple-600">+16.0°C</span></div>
+                            <div>التهوية: <span class="font-bold text-emerald-600">مغلقة</span></div>
+                        </div>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-black text-base text-slate-900">القاعة 5 (مشغولة)</span>
+                            <span class="px-2.5 py-1 bg-amber-100 text-amber-800 text-[11px] font-bold rounded-lg">يوم 1 - تسخين</span>
+                        </div>
+                        <div class="text-xs space-y-1 text-slate-600">
+                            <div>ماركة الموز: <span class="font-bold text-slate-900">كوستا سول</span></div>
+                            <div>الكمية: <span class="font-bold text-slate-900">1,500 كرتونة</span></div>
+                            <div>حرارة اللب: <span class="font-bold text-purple-600">+14.5°C</span></div>
+                            <div>التهوية: <span class="font-bold text-emerald-600">مغلقة</span></div>
+                        </div>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="font-black text-base text-slate-700">القاعة 6 (شاغرة)</span>
+                            <span class="px-2.5 py-1 bg-slate-200 text-slate-700 text-[11px] font-bold rounded-lg">جاهزة</span>
+                        </div>
+                        <div class="text-xs text-slate-400 py-
