@@ -3,787 +3,1231 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منظومة مستودع نجها - إدارة المخزون وتخمير الموز</title>
+    <title>منظومة مستودع نجها - شركة النسر التجارية | إدارة المخزون وتخمير الموز</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Omnifood Fonts: Rubik + Cairo -->
+    <!-- Firebase SDK (Compat Version) -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <!-- Omnifood Typography: Rubik + Cairo -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Rubik:wght@400;500;600;700;800&family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     
     <style>
+        :root {
+            --font-ar: 'Cairo', 'Tajawal', sans-serif;
+            --font-num: 'Rubik', sans-serif;
+            --omni-orange: #e67e22;
+            --omni-orange-dark: #cf711f;
+            --omni-bg-tint: #fdfaf7;
+            --omni-card-border: #fae5d3;
+        }
+
         body {
-            font-family: 'Cairo', 'Rubik', sans-serif;
-            background-color: #fdfaf7;
+            font-family: var(--font-ar);
+            background-color: var(--omni-bg-tint);
             color: #45260a;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
         }
+
         .font-num {
-            font-family: 'Rubik', sans-serif;
+            font-family: var(--font-num);
+            font-variant-numeric: tabular-nums;
         }
-        /* Omnifood Card Hover Effect & Shadows */
+
+        /* Omnifood Card Elevation, Border & Hover Lift */
         .omni-card {
             background-color: #ffffff;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px -5px rgba(230, 126, 34, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
-            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid #fae5d3;
+            border-radius: 18px;
+            border: 1px solid var(--omni-card-border);
+            box-shadow: 0 10px 25px -5px rgba(230, 126, 34, 0.07), 0 6px 10px -4px rgba(0, 0, 0, 0.03);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
         .omni-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 20px 35px -8px rgba(230, 126, 34, 0.15), 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 35px -8px rgba(230, 126, 34, 0.14), 0 8px 12px -3px rgba(0, 0, 0, 0.05);
+            border-color: #eb984e;
         }
-        .tab-btn.active {
-            background-color: #e67e22;
-            color: #ffffff;
-            box-shadow: 0 8px 20px rgba(230, 126, 34, 0.3);
+
+        /* Navigation Pills */
+        .omni-nav-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1rem;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #6f6f6f;
+            border-radius: 12px;
+            transition: all 0.25s ease;
+            white-space: nowrap;
         }
+
+        .omni-nav-pill:hover {
+            color: var(--omni-orange);
+            background-color: #fdf2e9;
+        }
+
+        .omni-nav-pill.active {
+            color: #ffffff !important;
+            background: linear-gradient(135deg, #e67e22 0%, #cf711f 100%) !important;
+            box-shadow: 0 6px 18px rgba(230, 126, 34, 0.35) !important;
+        }
+
+        /* Table Design */
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+        }
+
+        table thead th {
+            background-color: #fdf2e9 !important;
+            color: #45260a !important;
+            font-weight: 800;
+            padding: 0.85rem 1rem;
+            border-bottom: 2px solid var(--omni-card-border);
+            white-space: nowrap;
+        }
+
+        table tbody td {
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid #fdf2e9;
+            color: #333333;
+        }
+
+        table tbody tr:hover {
+            background-color: #fdf2e9/50;
+        }
+
+        /* Form Inputs */
+        input, select, textarea {
+            background-color: #ffffff !important;
+            border: 1px solid #e0d0c1 !important;
+            color: #333333 !important;
+            border-radius: 12px !important;
+            transition: all 0.2s ease !important;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none !important;
+            border-color: var(--omni-orange) !important;
+            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.2) !important;
+        }
+
+        /* Hide elements requiring admin auth */
+        body.visitor-mode .admin-only {
+            display: none !important;
+        }
+
+        .drawer-closed { transform: translateX(100%) !important; }
+        .drawer-open { transform: translateX(0) !important; }
+        #adminSideDrawer { transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1); }
     </style>
 </head>
-<body class="antialiased min-h-screen flex flex-col justify-between">
+<body class="min-h-screen flex flex-col antialiased visitor-mode">
 
-    <!-- Top Sticky & Smooth Navigation Bar (Omnifood Style) -->
-    <header class="bg-white/90 backdrop-blur-md border-b border-[#fae5d3] sticky top-0 z-30 shadow-sm transition-all">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+    <!-- Top Sticky & Transparent Navbar -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-[#fae5d3] shadow-sm w-full transition-all">
+        <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 w-full py-3.5 flex items-center justify-between gap-3">
+            
+            <!-- Right: Logo & Company -->
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#eb984e] to-[#e67e22] text-white flex items-center justify-center font-black shadow-lg shadow-orange-500/25 text-xl">
-                    D
+                <button onclick="toggleAdminDrawer()" class="lg:hidden p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-[#fdf2e9] border border-[#fae5d3]" title="قائمة الأقسام">
+                    <i data-lucide="menu" class="w-5 h-5 text-[#e67e22]"></i>
+                </button>
+
+                <!-- Eagle Shield Crest -->
+                <div class="h-11 w-15 sm:h-12 sm:w-20 bg-gradient-to-b from-slate-900 via-slate-950 to-black p-1 rounded-xl border-2 border-amber-400/70 flex items-center justify-center shadow-md shadow-orange-500/10 shrink-0 cursor-pointer" onclick="switchTab('dashboard')" title="شركة النسر التجارية - الرئيسية">
+                    <span class="text-amber-400 font-black text-sm tracking-widest font-num">AL-NESER</span>
                 </div>
-                <div>
-                    <h1 class="text-xl font-black text-[#45260a] tracking-tight leading-none">مستودع نجها</h1>
-                    <span class="text-xs text-[#cf711f] font-bold">إدارة المخزون والتبريد (شامل حتى 20/10/2026)</span>
+
+                <div class="flex flex-col">
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-base sm:text-lg font-black text-[#45260a] tracking-tight">شركة النسر التجارية</h1>
+                        <span class="inline-flex items-center bg-[#fdf2e9] text-[#cf711f] text-[10px] font-bold px-2.5 py-0.5 rounded-full border border-[#fae5d3]">منظومة نجها</span>
+                    </div>
+                    <span class="text-[11px] sm:text-xs text-[#888] font-medium hidden sm:block">إدارة المخزون وتخمير الموز — مستودع نجها المركزي</span>
                 </div>
             </div>
 
-            <!-- Navigation Tabs with Smooth Transitions -->
-            <nav class="hidden md:flex items-center gap-2 bg-[#fdf2e9] p-1.5 rounded-2xl border border-[#fae5d3]">
-                <button type="button" onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn active px-5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2">
-                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> لوحة التحكم
-                </button>
-                <button type="button" onclick="switchTab('movement')" id="tab-movement" class="tab-btn px-5 py-2 rounded-xl text-xs font-bold text-[#6f6f6f] hover:text-[#e67e22] transition-all flex items-center gap-2">
-                    <i data-lucide="arrow-left-right" class="w-4 h-4"></i> حركة المستودع والأرصدة
-                </button>
-                <button type="button" onclick="switchTab('chambers')" id="tab-chambers" class="tab-btn px-5 py-2 rounded-xl text-xs font-bold text-[#6f6f6f] hover:text-[#e67e22] transition-all flex items-center gap-2">
-                    <i data-lucide="boxes" class="w-4 h-4"></i> قاعات التخمير (6)
-                </button>
-            </nav>
-
-            <!-- Admin Controls -->
-            <div class="flex items-center gap-3">
-                <div id="adminBadge" class="hidden items-center gap-2">
-                    <span class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-xl text-xs font-bold border border-emerald-200">
-                        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i> وضع المسؤول مفعل
-                    </span>
-                    <button type="button" onclick="logoutAdmin()" class="text-xs text-[#cf711f] hover:text-red-500 font-bold underline">خروج</button>
+            <!-- Left: Stats & Login -->
+            <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#fdf2e9] border border-[#fae5d3] text-xs">
+                    <span class="text-[#6f6f6f] font-semibold">رصيد المستودع الفعلي:</span>
+                    <span class="font-black text-[#cf711f] font-num" id="headerStockBadge">15,871 طرد</span>
                 </div>
-                <button type="button" id="adminLoginBtn" onclick="toggleAdminModal(true)" class="px-4 py-2.5 bg-[#45260a] hover:bg-[#333] text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2 shadow-md cursor-pointer">
-                    <i data-lucide="lock" class="w-3.5 h-3.5 text-[#ffd43b]"></i> دخول المسؤول
+
+                <!-- Admin Action Buttons -->
+                <button id="btnLoginOpen" onclick="openLoginModal()" class="px-4 py-2 text-xs sm:text-sm font-bold text-white bg-[#45260a] hover:bg-[#333] rounded-xl shadow-md flex items-center gap-1.5 transition-all">
+                    <i data-lucide="lock" class="w-3.5 h-3.5 text-[#ffd43b]"></i>
+                    <span>دخول مسؤول</span>
                 </button>
+
+                <div id="adminBadgeWrapper" class="hidden flex items-center gap-1.5 sm:gap-2">
+                    <div class="px-3 py-1.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                        <span id="adminUserEmail" class="text-xs font-bold text-emerald-800 truncate">مسؤول النظام</span>
+                    </div>
+                    <button onclick="handleLogout()" class="p-2 bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 border border-slate-200 rounded-xl" title="تسجيل الخروج">
+                        <i data-lucide="log-out" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Subnav: 6 Main Sections (Desktop) -->
+        <div class="border-t border-[#fae5d3]/70 bg-white/70 hidden lg:block">
+            <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between overflow-x-auto">
+                <nav class="flex items-center gap-2 py-2">
+                    <button id="nav-dashboard" onclick="switchTab('dashboard')" class="omni-nav-pill active">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                        <span>الرئيسية والمؤشرات</span>
+                    </button>
+
+                    <button id="nav-inbound" onclick="switchTab('inbound')" class="omni-nav-pill">
+                        <i data-lucide="arrow-down-left" class="w-4 h-4 text-blue-600"></i>
+                        <span>استلام الحاويات</span>
+                        <span id="badgeInboundCount" class="bg-blue-100 text-blue-800 text-[11px] font-bold px-2 py-0.5 rounded-full font-num">115</span>
+                    </button>
+
+                    <button id="nav-dispatch" onclick="switchTab('dispatch')" class="omni-nav-pill">
+                        <i data-lucide="arrow-up-right" class="w-4 h-4 text-emerald-600"></i>
+                        <span>التوزيع والشحن</span>
+                        <span id="badgeDispatchCount" class="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2 py-0.5 rounded-full font-num">602</span>
+                    </button>
+
+                    <button id="nav-movement" onclick="switchTab('movement')" class="omni-nav-pill">
+                        <i data-lucide="activity" class="w-4 h-4 text-cyan-600"></i>
+                        <span>حركة المستودع والأرصدة</span>
+                        <span id="badgeMovementCount" class="bg-cyan-100 text-cyan-800 text-[11px] font-bold px-2 py-0.5 rounded-full font-num">48 يوماً</span>
+                    </button>
+
+                    <button id="nav-rooms" onclick="switchTab('rooms')" class="omni-nav-pill">
+                        <i data-lucide="boxes" class="w-4 h-4 text-amber-600"></i>
+                        <span>قاعات التخمير</span>
+                        <span id="badgeRoomsStock" class="bg-amber-100 text-amber-800 text-[11px] font-bold px-2 py-0.5 rounded-full font-num">15,871</span>
+                    </button>
+
+                    <button id="nav-inspection" onclick="switchTab('inspection')" class="omni-nav-pill">
+                        <i data-lucide="camera" class="w-4 h-4 text-purple-600"></i>
+                        <span>معرض وتقارير الفحص</span>
+                        <span id="badgeInspectionCount" class="bg-purple-100 text-purple-800 text-[11px] font-bold px-2 py-0.5 rounded-full font-num">115</span>
+                    </button>
+                </nav>
+
+                <!-- Directory Modals Quick Links -->
+                <div class="flex items-center gap-2 py-2">
+                    <button onclick="openDriverModal()" class="omni-nav-pill text-xs">
+                        <i data-lucide="users" class="w-3.5 h-3.5 text-blue-600"></i>
+                        <span>دليل السائقين</span>
+                    </button>
+                    <button onclick="openBrandsModal()" class="omni-nav-pill text-xs">
+                        <i data-lucide="tags" class="w-3.5 h-3.5 text-amber-600"></i>
+                        <span>دليل الماركات</span>
+                    </button>
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full space-y-8 flex-1">
+    <!-- Mobile Drawer -->
+    <div id="adminDrawerBackdrop" onclick="closeAdminDrawer()" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm lg:hidden transition-opacity duration-300 opacity-0"></div>
 
-        <!-- TAB 1: DASHBOARD -->
-        <div id="section-dashboard" class="space-y-8">
-            <!-- Omnifood Interactive Stat Cards -->
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-                <div class="omni-card p-5 flex flex-col justify-between">
-                    <span class="text-xs font-bold text-[#888]">رصيد المستودع الفعلي</span>
-                    <div class="mt-3">
-                        <h3 id="statTotalStock" class="text-3xl font-black text-[#333] font-num">0</h3>
-                        <p class="text-xs text-emerald-600 font-bold mt-1">طرد مخزن</p>
-                    </div>
-                </div>
-                <div class="omni-card p-5 flex flex-col justify-between">
-                    <span class="text-xs font-bold text-[#888]">إجمالي الوارد (شهر 10)</span>
-                    <div class="mt-3">
-                        <h3 id="statTotalIn" class="text-3xl font-black text-[#333] font-num">0</h3>
-                        <p class="text-xs text-[#cf711f] font-bold mt-1">56 حاوية مستلمة</p>
-                    </div>
-                </div>
-                <div class="omni-card p-5 flex flex-col justify-between">
-                    <span class="text-xs font-bold text-[#888]">إجمالي الصادر (توزيع)</span>
-                    <div class="mt-3">
-                        <h3 id="statTotalOut" class="text-3xl font-black text-[#333] font-num">0</h3>
-                        <p class="text-xs text-amber-600 font-bold mt-1">مبيعات السوق</p>
-                    </div>
-                </div>
-                <div class="omni-card p-5 flex flex-col justify-between">
-                    <span class="text-xs font-bold text-[#888]">توالف الشهر</span>
-                    <div class="mt-3">
-                        <h3 id="statTotalDamaged" class="text-3xl font-black text-[#333] font-num">0</h3>
-                        <p class="text-xs text-red-500 font-bold mt-1">طرد معزول (0.6%)</p>
-                    </div>
-                </div>
-                <div class="omni-card p-5 flex flex-col justify-between col-span-2 md:col-span-1">
-                    <span class="text-xs font-bold text-[#888]">قاعات نشطة</span>
-                    <div class="mt-3">
-                        <h3 class="text-3xl font-black text-[#333] font-num">5 / 6</h3>
-                        <p class="text-xs text-cyan-600 font-bold mt-1">تحت التبريد والتخمير</p>
-                    </div>
-                </div>
-            </div>
+    <aside id="adminSideDrawer" class="drawer-closed fixed top-0 right-0 z-50 flex h-screen w-72 flex-col bg-white border-l border-[#fae5d3] duration-300 ease-linear lg:hidden shadow-2xl">
+        <div class="p-4 border-b border-[#fae5d3] flex items-center justify-between bg-[#fdf2e9]">
+            <h2 class="font-extrabold text-[#45260a] text-sm">مستودع نجها - شركة النسر</h2>
+            <button onclick="closeAdminDrawer()" class="p-1.5 rounded-xl text-slate-500 hover:text-slate-900" title="إغلاق">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+        </div>
+        <div class="flex-1 overflow-y-auto p-4 space-y-2">
+            <button onclick="switchTab('dashboard')" class="w-full text-right px-3 py-2.5 rounded-xl text-xs font-bold hover:bg-[#fdf2e9] flex items-center gap-2.5">
+                <i data-lucide="layout-dashboard" class="w-4 h-4 text-[#e67e22]"></i>
+                <span>الرئيسية والمؤشرات</span>
+            </button>
+            <button onclick="switchTab('inbound')" class="w-full text-right px-3 py-2.5 rounded-xl text-xs font-bold hover:bg-[#fdf2e9] flex items-center gap-2.5">
+                <i data-lucide="arrow-down-left" class="w-4 h-4 text-blue-600"></i>
+                <span class="flex-1">استلام الحاويات</span>
+                <span class="bg-blue-100 text-blue-800 text-[10px] px-2 py-0.5 rounded-full font-num font-bold">115</span>
+            </button>
+            <button onclick="switchTab('dispatch')" class="w-full text-right px-3 py-2.5 rounded-xl text-xs font-bold hover:bg-[#fdf2e9] flex items-center gap-2.5">
+                <i data-lucide="arrow-up-right" class="w-4 h-4 text-emerald-600"></i>
+                <span class="flex-1">التوزيع والشحن</span>
+                <span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded-full font-num font-bold">602</span>
+            </button>
+            <button onclick="switchTab('movement')" class="w-full text-right px-3 py-2.5 rounded-xl text-xs font-bold hover:bg-[#fdf2e9] flex items-center gap-2.5">
+                <i data-lucide="activity" class="w-4 h-4 text-cyan-600"></i>
+                <span class="flex-1">حركة المستودع والأرصدة</span>
+                <span class="bg-cyan-100 text-cyan-800 text-[10px] px-2 py-0.5 rounded-full font-num font-bold">48 يوماً</span>
+            </button>
+            <button onclick="switchTab('rooms')" class="w-full text-right px-3 py-2.5 rounded-xl text-xs font-bold hover:bg-[#fdf2e9] flex items-center gap-2.5">
+                <i data-lucide="boxes" class="w-4 h-4 text-amber-600"></i>
+                <span class="flex-1">قاعات التخمير</span>
+                <span class="bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-num font-bold">15,871</span>
+            </button>
+            <button onclick="switchTab('inspection')" class="w-full text-right px-3 py-2.5 rounded-xl text-xs font-bold hover:bg-[#fdf2e9] flex items-center gap-2.5">
+                <i data-lucide="camera" class="w-4 h-4 text-purple-600"></i>
+                <span class="flex-1">معرض وتقارير الفحص</span>
+                <span class="bg-purple-100 text-purple-800 text-[10px] px-2 py-0.5 rounded-full font-num font-bold">115</span>
+            </button>
+        </div>
+    </aside>
 
-            <!-- Middle Section: 6 Chambers + Occupancy -->
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                <!-- 6 Chambers (8 Cols) -->
-                <div class="lg:col-span-8 omni-card p-6 flex flex-col justify-between">
-                    <div class="flex items-center justify-between border-b border-[#fae5d3] pb-4">
-                        <div>
-                            <h3 class="font-extrabold text-[#333] text-base">مخطط إشغال قاعات التخمير والتبريد (6 قاعات)</h3>
-                            <p class="text-xs text-[#888] mt-0.5">مستودع نجها - متابعة سعة القاعات وتوزيع الوارد</p>
-                        </div>
-                        <div class="flex items-center gap-3 text-xs">
-                            <span class="flex items-center gap-1.5 font-bold text-[#555]"><span class="w-3.5 h-3.5 rounded bg-[#e67e22]"></span> مشغولة</span>
-                            <span class="flex items-center gap-1.5 font-bold text-[#555]"><span class="w-3.5 h-3.5 rounded bg-slate-200"></span> شاغرة</span>
-                        </div>
-                    </div>
+    <!-- Main Workspace -->
+    <main class="flex-1 max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 py-5">
-                        <div class="p-4 rounded-2xl bg-[#fdf2e9] border border-[#fae5d3] flex flex-col justify-between transition-transform hover:-translate-y-1">
-                            <div class="flex justify-between items-center">
-                                <span class="font-black text-sm text-[#45260a]">قاعة رقم 1</span>
-                                <span class="text-[10px] font-bold bg-[#fae5d3] text-[#cf711f] px-2 py-0.5 rounded-full">مشغولة</span>
-                            </div>
-                            <div class="mt-3 text-xs space-y-1.5">
-                                <p class="text-[#333] font-bold">الصنف: روزيتا (161923)</p>
-                                <p class="text-[#6f6f6f] font-num">الكمية: 2,750 طرد</p>
-                                <p class="text-cyan-700 font-mono font-bold">+14.5°C | C2H4</p>
-                            </div>
-                        </div>
-
-                        <div class="p-4 rounded-2xl bg-[#fdf2e9] border border-[#fae5d3] flex flex-col justify-between transition-transform hover:-translate-y-1">
-                            <div class="flex justify-between items-center">
-                                <span class="font-black text-sm text-[#45260a]">قاعة رقم 2</span>
-                                <span class="text-[10px] font-bold bg-[#fae5d3] text-[#cf711f] px-2 py-0.5 rounded-full">مشغولة</span>
-                            </div>
-                            <div class="mt-3 text-xs space-y-1.5">
-                                <p class="text-[#333] font-bold">الصنف: روزيتا (161927)</p>
-                                <p class="text-[#6f6f6f] font-num">الكمية: 2,750 طرد</p>
-                                <p class="text-cyan-700 font-mono font-bold">+14.0°C | تهوية</p>
-                            </div>
-                        </div>
-
-                        <div class="p-4 rounded-2xl bg-[#fdf2e9] border border-[#fae5d3] flex flex-col justify-between transition-transform hover:-translate-y-1">
-                            <div class="flex justify-between items-center">
-                                <span class="font-black text-sm text-[#45260a]">قاعة رقم 3</span>
-                                <span class="text-[10px] font-bold bg-[#fae5d3] text-[#cf711f] px-2 py-0.5 rounded-full">مشغولة</span>
-                            </div>
-                            <div class="mt-3 text-xs space-y-1.5">
-                                <p class="text-[#333] font-bold">الصنف: روزيتا (161915)</p>
-                                <p class="text-[#6f6f6f] font-num">الكمية: 2,700 طرد</p>
-                                <p class="text-cyan-700 font-mono font-bold">+13.5°C | تبريد</p>
-                            </div>
-                        </div>
-
-                        <div class="p-4 rounded-2xl bg-[#fdf2e9] border border-[#fae5d3] flex flex-col justify-between transition-transform hover:-translate-y-1">
-                            <div class="flex justify-between items-center">
-                                <span class="font-black text-sm text-[#45260a]">قاعة رقم 4</span>
-                                <span class="text-[10px] font-bold bg-[#fae5d3] text-[#cf711f] px-2 py-0.5 rounded-full">مشغولة</span>
-                            </div>
-                            <div class="mt-3 text-xs space-y-1.5">
-                                <p class="text-[#333] font-bold">الصنف: روزيتا (وارد 19)</p>
-                                <p class="text-[#6f6f6f] font-num">الكمية: 2,640 طرد</p>
-                                <p class="text-cyan-700 font-mono font-bold">+15.0°C | تلوين</p>
-                            </div>
-                        </div>
-
-                        <div class="p-4 rounded-2xl bg-[#fdf2e9] border border-[#fae5d3] flex flex-col justify-between transition-transform hover:-translate-y-1">
-                            <div class="flex justify-between items-center">
-                                <span class="font-black text-sm text-[#45260a]">قاعة رقم 5</span>
-                                <span class="text-[10px] font-bold bg-[#fae5d3] text-[#cf711f] px-2 py-0.5 rounded-full">مشغولة</span>
-                            </div>
-                            <div class="mt-3 text-xs space-y-1.5">
-                                <p class="text-[#333] font-bold">الصنف: اكسترا بان (هندي)</p>
-                                <p class="text-[#6f6f6f] font-num">الكمية: 2,800 طرد</p>
-                                <p class="text-cyan-700 font-mono font-bold">+14.0°C | تسليم</p>
-                            </div>
-                        </div>
-
-                        <div class="p-4 rounded-2xl bg-white border border-dashed border-[#fae5d3] flex flex-col justify-between">
-                            <div class="flex justify-between items-center">
-                                <span class="font-black text-sm text-[#888]">قاعة رقم 6</span>
-                                <span class="text-[10px] font-bold bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">شاغرة</span>
-                            </div>
-                            <div class="mt-3 text-xs text-[#888] py-4 text-center">
-                                جاهزة لاستقبال البواخر القادمة
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Donut Chart (4 Cols) -->
-                <div class="lg:col-span-4 omni-card p-6 flex flex-col items-center justify-between">
-                    <div class="w-full flex items-center justify-between border-b border-[#fae5d3] pb-3">
-                        <h3 class="font-extrabold text-[#333] text-sm">إشغال سعة المستودع</h3>
-                        <span class="text-xs bg-[#fae5d3] text-[#cf711f] px-2.5 py-1 rounded-full font-bold">5 قاعات مشغولة</span>
-                    </div>
-
-                    <div class="relative w-44 h-44 my-4 flex items-center justify-center">
-                        <canvas id="occupancyChart"></canvas>
-                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                            <span class="text-3xl font-black text-[#333] font-num">83%</span>
-                            <span class="text-[11px] text-[#888] font-bold">نسبة الامتلاء</span>
-                        </div>
-                    </div>
-
-                    <div class="w-full grid grid-cols-2 gap-2 text-center pt-3 border-t border-[#fae5d3]">
-                        <div class="p-2.5 rounded-xl bg-[#fdf2e9]">
-                            <span class="text-[11px] text-[#888] block font-bold">قاعات مشغولة</span>
-                            <span class="text-sm font-black text-[#45260a] font-num">5 قاعات</span>
-                        </div>
-                        <div class="p-2.5 rounded-xl bg-[#fdf2e9]">
-                            <span class="text-[11px] text-[#888] block font-bold">قاعات شاغرة</span>
-                            <span class="text-sm font-black text-emerald-600 font-num">1 قاعة</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Stock Distribution Bar Chart -->
-            <div class="omni-card p-6">
-                <div class="flex items-center justify-between mb-4 border-b border-[#fae5d3] pb-3">
-                    <h3 class="font-extrabold text-[#333] text-sm">توزيع رصيد الماركات الفعلي في المستودع</h3>
-                    <span class="text-xs text-[#cf711f] font-bold">مزامنة فورية</span>
-                </div>
-                <div class="h-64">
-                    <canvas id="stockChart"></canvas>
-                </div>
-            </div>
+        <!-- Notification Toast -->
+        <div id="toastNotification" class="fixed bottom-5 left-5 z-50 transform translate-y-24 opacity-0 transition-all duration-300 bg-white border border-[#fae5d3] p-4 rounded-2xl shadow-2xl flex items-center gap-3">
+            <div id="toastIcon" class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">✓</div>
+            <div id="toastMsg" class="text-sm font-bold text-[#333]">تمت العملية بنجاح</div>
         </div>
 
-        <!-- TAB 2: WAREHOUSE MOVEMENT & INVENTORY TABLE -->
-        <div id="section-movement" class="hidden space-y-6">
-            <div class="omni-card p-6">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[#fae5d3]">
-                    <div>
-                        <h2 class="text-lg font-black text-[#333]">جدول حركة المخزون والأرصدة الفعلي لشهر تشرين الأول 2026</h2>
-                        <p class="text-xs text-[#6f6f6f]">مزامنة محلية وتعديل مباشر محفوظ في المتصفح (localStorage)</p>
+        <!-- ================= SECTION 1: DASHBOARD ================= -->
+        <section id="tab-dashboard" class="space-y-6">
+            <!-- Global Live Calendar Bar -->
+            <div class="omni-card p-4 sm:p-5 border border-[#fae5d3] space-y-3">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#fae5d3]">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-10 h-10 rounded-xl bg-[#fdf2e9] text-[#e67e22] flex items-center justify-center font-bold shrink-0">
+                            <i data-lucide="calendar" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="font-extrabold text-xs sm:text-sm text-[#45260a]">تقويم حركة المستودع اليومية</h3>
+                                <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">مباشر</span>
+                            </div>
+                            <p id="calendarDayLabel" class="text-xs text-[#888]">الأحد، 18 تشرين الأول 2026</p>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <button type="button" onclick="openInspectionModal()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center gap-1.5 cursor-pointer">
-                            <i data-lucide="clipboard-check" class="w-4 h-4"></i> فحص استلام حاوية
+
+                    <!-- Date Controls -->
+                    <div class="flex items-center gap-2 self-end sm:self-auto">
+                        <button type="button" onclick="navigateCalendarDay(-1)" class="p-2 rounded-xl bg-[#fdf2e9] hover:bg-[#fae5d3] text-[#45260a] text-xs font-bold" title="اليوم السابق">
+                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
                         </button>
-                        <button type="button" id="addMovementBtn" onclick="openMovementModal()" class="px-4 py-2 bg-[#e67e22] hover:bg-[#cf711f] text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center gap-1.5 cursor-pointer">
-                            <i data-lucide="plus" class="w-4 h-4"></i> تسجيل حركة وارد / صادر
+                        <input type="date" id="globalCalendarPicker" onchange="onGlobalDatePicked(this.value)" class="px-3 py-1.5 text-xs font-bold font-num cursor-pointer">
+                        <button type="button" onclick="setCalendarToToday()" class="px-3 py-1.5 rounded-xl bg-[#e67e22] hover:bg-[#cf711f] text-white font-bold text-xs">
+                            اليوم
                         </button>
-                        <button type="button" onclick="resetToInitialData()" title="استعادة أرصدة 20/10 الأصلية" class="p-2 bg-[#fdf2e9] hover:bg-[#fae5d3] text-[#cf711f] rounded-xl transition-all">
-                            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                        <button type="button" onclick="navigateCalendarDay(1)" class="p-2 rounded-xl bg-[#fdf2e9] hover:bg-[#fae5d3] text-[#45260a] text-xs font-bold" title="اليوم التالي">
+                            <i data-lucide="chevron-left" class="w-4 h-4"></i>
                         </button>
                     </div>
                 </div>
 
-                <!-- Complete Table -->
-                <div class="overflow-x-auto mt-4">
+                <!-- Calendar Daily Metric Cards -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+                    <div class="p-3 bg-[#fdf2e9]/60 rounded-xl border border-[#fae5d3] flex flex-col justify-between">
+                        <span class="text-[#888] font-bold">رصيد بداية اليوم</span>
+                        <div class="flex items-baseline gap-1 mt-1">
+                            <span id="calOpenStock" class="text-base sm:text-lg font-black text-[#333] font-num">16,778</span>
+                            <span class="text-[10px] text-[#888]">طرد</span>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-cyan-50 rounded-xl border border-cyan-200 flex flex-col justify-between">
+                        <span class="text-cyan-800 font-bold">الوارد (الاستلام)</span>
+                        <div class="flex items-baseline gap-1 mt-1">
+                            <span id="calInboundQty" class="text-base sm:text-lg font-black text-cyan-700 font-num">+1,098</span>
+                            <span id="calInboundCount" class="text-[10px] text-cyan-600">(1 حاوية)</span>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-emerald-50 rounded-xl border border-emerald-200 flex flex-col justify-between">
+                        <span class="text-emerald-800 font-bold">الصادر (التوزيع)</span>
+                        <div class="flex items-baseline gap-1 mt-1">
+                            <span id="calDispatchQty" class="text-base sm:text-lg font-black text-emerald-700 font-num">-2,005</span>
+                            <span id="calDispatchCount" class="text-[10px] text-emerald-600">(13 إرسالية)</span>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-amber-50 rounded-xl border border-amber-200 flex flex-col justify-between">
+                        <span class="text-amber-800 font-bold">رصيد نهاية اليوم</span>
+                        <div class="flex items-baseline gap-1 mt-1">
+                            <span id="calCloseStock" class="text-base sm:text-lg font-black text-amber-700 font-num">15,871</span>
+                            <span class="text-[10px] text-amber-600 font-bold">مطابق للجرد</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4 Top Cards (Omnifood Style) -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="omni-card p-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-[#888]">رصيد المستودع الفعلي</span>
+                        <div class="w-9 h-9 rounded-xl bg-orange-100 text-[#e67e22] flex items-center justify-center">
+                            <i data-lucide="box" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span id="kpiCurrentStock" class="text-2xl sm:text-3xl font-black text-[#333] font-num">15,871</span>
+                        <span class="text-xs font-bold text-[#888]">كرتونة</span>
+                    </div>
+                    <p class="text-[11px] text-emerald-600 mt-2 font-bold flex items-center gap-1">
+                        <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> مطابق تماماً لمجموع القاعات
+                    </p>
+                </div>
+
+                <div class="omni-card p-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-[#888]">إجمالي الحاويات المستلمة</span>
+                        <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center">
+                            <i data-lucide="ship" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span id="kpiTotalContainers" class="text-2xl sm:text-3xl font-black text-[#333] font-num">115</span>
+                        <span class="text-xs font-bold text-[#888]">حاوية</span>
+                    </div>
+                    <p class="text-[11px] text-[#6f6f6f] mt-2 font-medium">
+                        إجمالي <span id="kpiTotalReceived" class="text-blue-600 font-bold font-num">129,731</span> كرتونة واردة
+                    </p>
+                </div>
+
+                <div class="omni-card p-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-[#888]">إجمالي الصادر والتوزيع</span>
+                        <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                            <i data-lucide="truck" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span id="kpiTotalDispatched" class="text-2xl sm:text-3xl font-black text-[#333] font-num">124,134</span>
+                        <span class="text-xs font-bold text-[#888]">كرتونة</span>
+                    </div>
+                    <p class="text-[11px] text-[#6f6f6f] mt-2 font-medium">
+                        <span id="kpiTotalDispatchedTrans" class="text-emerald-600 font-bold font-num">602</span> إرسالية لدمشق
+                    </p>
+                </div>
+
+                <div class="omni-card p-5">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold text-[#888]">قاعات التخمير المشغولة</span>
+                        <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
+                            <i data-lucide="flame" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline gap-2">
+                        <span class="text-2xl sm:text-3xl font-black text-amber-600 font-num">6 / 6</span>
+                        <span class="text-xs font-bold text-[#888]">قاعات</span>
+                    </div>
+                    <p class="text-[11px] text-amber-700 mt-2 font-medium">
+                        جميع القاعات (7 إلى 12) مشغولة بالكامل
+                    </p>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 omni-card p-6">
+                    <div class="flex items-center justify-between mb-4 border-b border-[#fae5d3] pb-3">
+                        <div>
+                            <h3 class="font-bold text-[#333] text-base">مسار رصيد المستودع والتدفق اليومي</h3>
+                            <p class="text-xs text-[#888]">تتبع حركة الوارد والصادر وتطور رصيد نجها الفعلي</p>
+                        </div>
+                        <span class="px-2.5 py-1 text-xs rounded-lg bg-[#fdf2e9] text-[#e67e22] font-bold border border-[#fae5d3]">بيانات دقيقة</span>
+                    </div>
+                    <div class="h-72 w-full">
+                        <canvas id="movementChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="omni-card p-6 flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-bold text-[#333] text-base mb-1">توزيع حصص الأسواق</h3>
+                        <p class="text-xs text-[#888] mb-5">توزيع الأصناف وحصص الأسواق من إجمالي الصادر (<span id="dynMarketTotalBoxes" class="font-num font-bold text-[#333]">124,134</span> طرد)</p>
+                        <div class="space-y-4">
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-1.5">
+                                    <span class="text-[#555]">سوق دمشق (أحمد الطالب + عمر العقاد)</span>
+                                    <span id="dynMarketDamascusText" class="text-[#e67e22] font-num">99.5%</span>
+                                </div>
+                                <div class="w-full bg-[#fdf2e9] rounded-full h-2">
+                                    <div id="dynMarketDamascusBar" class="bg-[#e67e22] h-2 rounded-full transition-all duration-500" style="width: 99.5%"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-1.5">
+                                    <span class="text-[#555]">الأسواق الأخرى والتصدير</span>
+                                    <span id="dynMarketExportText" class="text-amber-500 font-num">0.5%</span>
+                                </div>
+                                <div class="w-full bg-[#fdf2e9] rounded-full h-2">
+                                    <div id="dynMarketExportBar" class="bg-amber-400 h-2 rounded-full transition-all duration-500" style="width: 0.5%"></div>
+                                </div>
+                            </div>
+                            <div class="pt-3 border-t border-[#fae5d3]">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-bold text-[#888]">الماركات النشطة:</span>
+                                    <button onclick="openBrandsModal()" class="text-xs text-[#e67e22] font-bold hover:underline">+ تعديل الماركات</button>
+                                </div>
+                                <div id="brandsPillsContainer" class="flex flex-wrap gap-1.5 text-xs"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 2: INBOUND (استلام الحاويات) ================= -->
+        <section id="tab-inbound" class="hidden space-y-6">
+            <div class="omni-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-lg font-bold text-[#333] flex items-center gap-2">
+                        <i data-lucide="arrow-down-left" class="w-5 h-5 text-blue-600"></i>
+                        سجل استلام الحاويات وشحنات الموز
+                    </h2>
+                    <p id="inboundDescText" class="text-xs text-[#888] mt-1">توثيق كامل لكافة الحاويات الـ <span id="dynInboundContCount" class="font-bold text-blue-600 font-num">115</span> المستلمة من المرفأ وباب الهوى بإجمالي <span id="dynInboundBoxesCount" class="font-bold text-[#333] font-num">129,731</span> كرتونة</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="openBrandsModal()" class="px-3.5 py-2 bg-[#fdf2e9] text-[#e67e22] border border-[#fae5d3] rounded-xl text-xs font-bold">
+                        <i data-lucide="tags" class="w-4 h-4 inline"></i> الماركات
+                    </button>
+                    <button onclick="toggleInboundForm()" class="admin-only px-4 py-2 bg-[#e67e22] hover:bg-[#cf711f] text-white rounded-xl text-xs font-bold shadow-md">
+                        <i data-lucide="plus-circle" class="w-4 h-4 inline"></i> إضافة حاوية واردة
+                    </button>
+                </div>
+            </div>
+
+            <!-- Inbound Form -->
+            <div id="newInboundFormCard" class="hidden admin-only omni-card p-6 shadow-xl">
+                <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#fae5d3]">
+                    <h3 class="font-bold text-[#333] text-sm">إدخال بيان حاوية استلام جديدة</h3>
+                    <button onclick="toggleInboundForm()" class="text-[#888] hover:text-[#333] text-xs font-bold">✕ إلغاء</button>
+                </div>
+                <form id="inboundForm" onsubmit="handleNewInbound(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                    <div>
+                        <label class="block font-bold text-[#555] mb-1">رقم الحاوية *</label>
+                        <input type="text" id="inContNumber" required placeholder="مثال: 161927" class="w-full px-3 py-2 font-num">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-[#555] mb-1">تاريخ الوصول *</label>
+                        <input type="date" id="inDate" required value="2026-10-18" class="w-full px-3 py-2 font-num">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-[#555] mb-1">جهة القدوم</label>
+                        <select id="inPort" class="w-full px-3 py-2 font-bold">
+                            <option value="باب الهوى">باب الهوى</option>
+                            <option value="المرفأ">المرفأ</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-[#555] mb-1">الماركة *</label>
+                        <select id="inBrand" class="w-full px-3 py-2 font-bold"></select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-[#555] mb-1">عدد الكراتين *</label>
+                        <input type="number" id="inQty" required value="1098" class="w-full px-3 py-2 font-num font-bold">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-[#555] mb-1">رقم السيارة</label>
+                        <input type="text" id="inCarNum" placeholder="مثال: 8192776" class="w-full px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-[#555] mb-1">السائق الناقل</label>
+                        <input type="text" id="inDriverName" placeholder="مثال: عبد الرحمن نوادي" class="w-full px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-[#555] mb-1">حرارة اللب (°C)</label>
+                        <input type="number" step="0.1" id="inTemp" value="13.5" class="w-full px-3 py-2 font-num">
+                    </div>
+                    <div class="col-span-full flex justify-end gap-2 pt-2 border-t border-[#fae5d3]">
+                        <button type="button" onclick="toggleInboundForm()" class="px-4 py-2 bg-slate-100 rounded-xl">إلغاء</button>
+                        <button type="submit" class="px-6 py-2 bg-[#e67e22] hover:bg-[#cf711f] text-white font-bold rounded-xl shadow-md">حفظ واستلام</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Inbound Table -->
+            <div class="omni-card overflow-hidden">
+                <div class="p-4 border-b border-[#fae5d3] flex justify-between items-center">
+                    <span class="text-xs font-bold text-[#333]">سجل الشحنات المستلمة</span>
+                    <input type="text" id="inboundSearchInput" onkeyup="filterInboundTable()" placeholder="ابحث برقم الحاوية أو السائق..." class="text-xs px-3 py-1.5 w-64">
+                </div>
+                <div class="overflow-x-auto max-h-[550px] overflow-y-auto">
                     <table class="w-full text-right text-xs">
                         <thead>
-                            <tr class="bg-[#fdf2e9] text-[#45260a] font-black border-b border-[#fae5d3]">
-                                <th class="p-3.5">الماركة والمنشأ</th>
-                                <th class="p-3.5">العبوة والوزن</th>
-                                <th class="p-3.5 text-blue-700">رصيد أول الشهر</th>
-                                <th class="p-3.5 text-emerald-700">إجمالي الوارد</th>
-                                <th class="p-3.5 text-amber-700">إجمالي الصادر</th>
-                                <th class="p-3.5 text-[#333] font-bold">الرصيد الفعلي</th>
-                                <th class="p-3.5 text-[#888]">حالة الصنف</th>
+                            <tr>
+                                <th>#</th>
+                                <th>رقم الحاوية</th>
+                                <th>تاريخ الوصول</th>
+                                <th>المنفذ</th>
+                                <th>الماركة</th>
+                                <th>العدد</th>
+                                <th>رقم السيارة</th>
+                                <th>السائق</th>
+                                <th class="text-center">الحرارة</th>
+                                <th class="text-center">أصفر</th>
+                                <th class="text-center">ثاني</th>
+                                <th class="text-center">لين</th>
+                                <th class="text-center">تالف</th>
+                                <th class="text-center admin-only">إجراء</th>
                             </tr>
                         </thead>
-                        <tbody id="inventoryTableBody" class="divide-y divide-[#fae5d3] font-bold">
-                            <!-- Rendered by JS -->
-                        </tbody>
-                        <tfoot>
-                            <tr class="bg-[#fdf2e9] text-[#45260a] font-black border-t-2 border-[#e67e22]">
-                                <td class="p-3.5 text-sm" colspan="2">المجموع العام لشهر 10</td>
-                                <td id="tblTotalStart" class="p-3.5 text-blue-700 text-sm font-num">9,126</td>
-                                <td id="tblTotalIn" class="p-3.5 text-emerald-700 text-sm font-num">63,735</td>
-                                <td id="tblTotalOut" class="p-3.5 text-amber-700 text-sm font-num">57,134</td>
-                                <td id="tblTotalRem" class="p-3.5 text-[#333] font-black text-base font-num">15,727</td>
-                                <td class="p-3.5 text-emerald-700 font-black">حفظ دائم مفعل</td>
-                            </tr>
-                        </tfoot>
+                        <tbody id="inboundTableBody"></tbody>
                     </table>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- TAB 3: CHAMBERS DETAILS -->
-        <div id="section-chambers" class="hidden space-y-6">
-            <div class="omni-card p-6">
-                <h2 class="text-lg font-black text-[#333] mb-1">تفاصيل قاعات التخمير الست (مستودع نجها)</h2>
-                <p class="text-xs text-[#888] mb-6">متابعة درجات حرارة اللب وبروتوكول التهوية وغاز الإيثيلين</p>
-                
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div class="p-5 rounded-2xl bg-[#fdf2e9] border border-[#fae5d3] space-y-3">
-                        <div class="flex justify-between items-center">
-                            <span class="font-black text-base text-[#45260a]">القاعة 1</span>
-                            <span class="px-2.5 py-1 bg-[#fae5d3] text-[#cf711f] text-[11px] font-bold rounded-lg">مشغولة</span>
-                        </div>
-                        <div class="text-xs space-y-1.5 text-[#555]">
-                            <div>ماركة الموز: <span class="font-bold text-[#333]">روزيتا (حاوية 161923)</span></div>
-                            <div>الكمية: <span class="font-bold text-[#333] font-num">2,750 كرتونة</span></div>
-                            <div>حرارة اللب: <span class="font-bold text-purple-600 font-num">+14.5°C</span></div>
-                            <div>الغاز: <span class="font-bold text-emerald-600">محقون إيثيلين</span></div>
-                        </div>
+        <!-- ================= SECTION 3: DISPATCH (التوزيع والشحن) ================= -->
+        <section id="tab-dispatch" class="hidden space-y-6">
+            <div class="omni-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-lg font-bold text-[#333] flex items-center gap-2">
+                        <i data-lucide="arrow-up-right" class="w-5 h-5 text-emerald-600"></i>
+                        أذونات التوزيع والشحن لدمشق (<span id="dynDispatchTransCount" class="font-num">602</span> إرسالية)
+                    </h2>
+                    <p id="dispatchDescText" class="text-xs text-[#888] mt-1">توثيق شامل لكافة الإرساليات المنصرفة لأسواق دمشق بإجمالي <span id="dynDispatchBoxesCount" class="font-bold text-[#333] font-num">124,134</span> كرتونة موز</p>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleDispatchForm()" class="admin-only px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md">
+                        <i data-lucide="plus-circle" class="w-4 h-4 inline"></i> تسجيل إرسالية توزيع
+                    </button>
+                </div>
+            </div>
+
+            <!-- Dispatch Form -->
+            <div id="newDispatchFormCard" class="hidden admin-only omni-card p-6 shadow-xl">
+                <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#fae5d3]">
+                    <h3 class="font-bold text-[#333] text-sm">تسجيل إرسالية توزيع وصرف جديدة</h3>
+                    <button onclick="toggleDispatchForm()" class="text-[#888] hover:text-[#333] text-xs font-bold">✕ إلغاء</button>
+                </div>
+                <form id="dispatchForm" onsubmit="handleNewDispatch(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+                    <div>
+                        <label class="block font-bold text-[#555] mb-1">السائق الناقل *</label>
+                        <select id="dispDriverSelect" onchange="onDriverSelected()" class="w-full px-3 py-2"></select>
                     </div>
-                    <div class="p-5 rounded-2xl bg-[#fdf2e9] border border-[#fae5d3] space-y-3">
-                        <div class="flex justify-between items-center">
-                            <span class="font-black text-base text-[#45260a]">القاعة 2</span>
-                            <span class="px-2.5 py-1 bg-[#fae5d3] text-[#cf711f] text-[11px] font-bold rounded-lg">مشغولة</span>
-                        </div>
-                        <div class="text-xs space-y-1.5 text-[#555]">
-                            <div>ماركة الموز: <span class="font-bold text-[#333]">روزيتا (حاوية 161927)</span></div>
-                            <div>الكمية: <span class="font-bold text-[#333] font-num">2,750 كرتونة</span></div>
-                            <div>حرارة اللب: <span class="font-bold text-purple-600 font-num">+14.0°C</span></div>
-                            <div>التهوية: <span class="font-bold text-emerald-600">طرد ثاني أكسيد الكربون</span></div>
-                        </div>
+                    <div>
+                        <label class="block font-bold text-[#555] mb-1">التاجر / الزبون *</label>
+                        <select id="dispMerchantSelect" onchange="onMerchantSelectChange()" class="w-full px-3 py-2 font-bold"></select>
                     </div>
-                    <div class="p-5 rounded-2xl bg-[#fdf2e9] border border-[#fae5d3] space-y-3">
-                        <div class="flex justify-between items-center">
-                            <span class="font-black text-base text-[#45260a]">القاعة 3</span>
-                            <span class="px-2.5 py-1 bg-[#fae5d3] text-[#cf711f] text-[11px] font-bold rounded-lg">مشغولة</span>
-                        </div>
-                        <div class="text-xs space-y-1.5 text-[#555]">
-                            <div>ماركة الموز: <span class="font-bold text-[#333]">روزيتا (تخزين 161915)</span></div>
-                            <div>الكمية: <span class="font-bold text-[#333] font-num">2,700 كرتونة</span></div>
-                            <div>حرارة اللب: <span class="font-bold text-purple-600 font-num">+13.5°C</span></div>
-                            <div>الحالة: <span class="font-bold text-emerald-600">تبريد وتثبيت</span></div>
-                        </div>
+                    <div>
+                        <label class="block font-bold text-[#555] mb-1">الصرف من قاعة رقم *</label>
+                        <select id="dispSourceRoom" required onchange="onSourceRoomSelected()" class="w-full px-3 py-2 font-bold"></select>
                     </div>
-                    <div class="p-5 rounded-2xl bg-[#fdf2e9] border border-[#fae5d3] space-y-3">
-                        <div class="flex justify-between items-center">
-                            <span class="font-black text-base text-[#45260a]">القاعة 4</span>
-                            <span class="px-2.5 py-1 bg-[#fae5d3] text-[#cf711f] text-[11px] font-bold rounded-lg">مشغولة</span>
-                        </div>
-                        <div class="text-xs space-y-1.5 text-[#555]">
-                            <div>ماركة الموز: <span class="font-bold text-[#333]">روزيتا (وارد 19/10)</span></div>
-                            <div>الكمية: <span class="font-bold text-[#333] font-num">2,640 كرتونة</span></div>
-                            <div>حرارة اللب: <span class="font-bold text-purple-600 font-num">+15.0°C</span></div>
-                            <div>الحالة: <span class="font-bold text-amber-600">يوم 3 - تلوين</span></div>
-                        </div>
+                    <div>
+                        <label class="block font-bold text-[#555] mb-1">الماركة *</label>
+                        <select id="dispBrand" required class="w-full px-3 py-2 font-bold"></select>
                     </div>
-                    <div class="p-5 rounded-2xl bg-[#fdf2e9] border border-[#fae5d3] space-y-3">
-                        <div class="flex justify-between items-center">
-                            <span class="font-black text-base text-[#45260a]">القاعة 5</span>
-                            <span class="px-2.5 py-1 bg-[#fae5d3] text-[#cf711f] text-[11px] font-bold rounded-lg">مشغولة</span>
-                        </div>
-                        <div class="text-xs space-y-1.5 text-[#555]">
-                            <div>ماركة الموز: <span class="font-bold text-[#333]">اكسترا بان (هندي 14كغ)</span></div>
-                            <div>الكمية: <span class="font-bold text-[#333] font-num">2,800 كرتونة</span></div>
-                            <div>حرارة اللب: <span class="font-bold text-purple-600 font-num">+14.0°C</span></div>
-                            <div>الحالة: <span class="font-bold text-emerald-600">تسليم وتوزيع</span></div>
-                        </div>
+                    <div>
+                        <label class="block font-bold text-[#555] mb-1">عدد الكراتين (الصادرة) *</label>
+                        <input type="number" id="dispQty" required min="1" placeholder="مثال: 440" class="w-full px-3 py-2 font-num font-bold">
                     </div>
-                    <div class="p-5 rounded-2xl bg-white border border-dashed border-[#fae5d3] space-y-3">
-                        <div class="flex justify-between items-center">
-                            <span class="font-black text-base text-[#888]">القاعة 6</span>
-                            <span class="px-2.5 py-1 bg-slate-100 text-slate-500 text-[11px] font-bold rounded-lg">شاغرة</span>
-                        </div>
-                        <div class="text-xs text-[#888] py-4 text-center">
-                            جاهزة لاستقبال البواخر القادمة
-                        </div>
+                    <div>
+                        <label class="block font-bold text-[#555] mb-1">رقم السيارة</label>
+                        <input type="text" id="dispCarNum" required class="w-full px-3 py-2 font-num">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-[#555] mb-1">الوجهة</label>
+                        <input type="text" id="dispDestination" required value="دمشق" class="w-full px-3 py-2">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-[#555] mb-1">تاريخ التحميل</label>
+                        <input type="date" id="dispDate" required value="2026-10-18" class="w-full px-3 py-2 font-num">
+                    </div>
+                    <div class="col-span-full flex justify-end gap-2 pt-2 border-t border-[#fae5d3]">
+                        <button type="button" onclick="toggleDispatchForm()" class="px-4 py-2 bg-slate-100 rounded-xl">إلغاء</button>
+                        <button type="submit" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md">تأكيد الصرف</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Dispatch Table -->
+            <div class="omni-card overflow-hidden">
+                <div class="p-4 border-b border-[#fae5d3] flex justify-between items-center">
+                    <span class="text-xs font-bold text-[#333]">سجل أذونات التوزيع</span>
+                    <input type="text" id="dispatchSearchInput" oninput="filterDispatchTable()" placeholder="ابحث بالتاجر أو السائق أو الإيصال..." class="text-xs px-3 py-1.5 w-64">
+                </div>
+                <div class="overflow-x-auto max-h-[550px] overflow-y-auto">
+                    <table class="w-full text-right text-xs">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>التاريخ</th>
+                                <th>اليوم</th>
+                                <th>السائق</th>
+                                <th>التاجر</th>
+                                <th>رقم السيارة</th>
+                                <th>القاعة</th>
+                                <th>الوجهة</th>
+                                <th>الماركة</th>
+                                <th>العدد</th>
+                                <th>الإيصال</th>
+                                <th class="text-center admin-only">إجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dispatchTableBody"></tbody>
+                    </table>
+                </div>
+                <div class="p-3 bg-[#fdf2e9]/50 border-t border-[#fae5d3] flex items-center justify-between text-xs text-[#888]">
+                    <div id="dispatchPaginationInfo">عرض الإرساليات</div>
+                    <div class="flex items-center gap-1.5" id="dispatchPaginationControls"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION 4: MOVEMENT (حركة المستودع) ================= -->
+        <section id="tab-movement" class="hidden space-y-6">
+            <div class="omni-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-lg font-bold text-[#333] flex items-center gap-2">
+                        <i data-lucide="activity" class="w-5 h-5 text-cyan-600"></i>
+                        حركة مستودع نجها الشاملة ومطابقة الأرصدة
+                    </h2>
+                    <p class="text-xs text-[#888] mt-1">تقرير حركة الوارد والتوزيع اليومي للموز (سجل 48 يوماً كاملاً)</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="px-3.5 py-1.5 bg-[#fdf2e9] border border-[#fae5d3] rounded-xl text-xs font-bold text-[#45260a]">
+                        الرصيد الفعلي الحالي: <span class="text-[#e67e22] font-num" id="movementFinalBadge">15,871 طرد</span>
                     </div>
                 </div>
             </div>
-        </div>
 
-    </main>
+            <div class="omni-card overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-right text-xs">
+                        <thead>
+                            <tr>
+                                <th>التاريخ</th>
+                                <th>اليوم</th>
+                                <th>رصيد البداية</th>
+                                <th class="text-cyan-700">الوارد</th>
+                                <th class="text-emerald-700">الصادر</th>
+                                <th class="text-amber-700">الصافي</th>
+                                <th class="text-[#333] font-black">رصيد النهاية</th>
+                                <th>البيان والملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="movementTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
 
-    <!-- Movement Modal -->
-    <div id="movementModal" class="hidden fixed inset-0 z-50 bg-[#45260a]/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-[#fae5d3] space-y-4">
-            <div class="flex items-center justify-between border-b border-[#fae5d3] pb-3">
-                <h3 class="font-black text-[#333] text-base flex items-center gap-2">
-                    <i data-lucide="plus-circle" class="w-5 h-5 text-[#e67e22]"></i> تسجيل حركة مستودع جديدة
-                </h3>
-                <button type="button" onclick="closeMovementModal()" class="text-[#888] hover:text-[#333]">
-                    <i data-lucide="x" class="w-5 h-5"></i>
+        <!-- ================= SECTION 5: ROOMS (قاعات التخمير) ================= -->
+        <section id="tab-rooms" class="hidden space-y-6">
+            <div class="omni-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-lg font-bold text-[#333] flex items-center gap-2">
+                        <i data-lucide="boxes" class="w-5 h-5 text-amber-600"></i>
+                        حالة قاعات التخمير والإنضاج (7 إلى 12)
+                    </h2>
+                    <p class="text-xs text-[#888] mt-1">مطابقة تامة: مجموع كراتين القاعات يساوي تماماً العدد الفعلي للمستودع (<span class="font-bold text-[#e67e22] font-num">15,871</span> كرتونة)</p>
+                </div>
+                <div class="px-4 py-2 bg-[#fdf2e9] border border-[#fae5d3] rounded-xl text-xs font-bold text-[#cf711f]">
+                    إجمالي القاعات: <span class="text-sm font-black text-[#333] font-num" id="roomsTotalBadge">15,871</span> كرتونة
+                </div>
+            </div>
+
+            <!-- Rooms Grid (Cards 7 to 12) -->
+            <div id="roomsGridContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
+        </section>
+
+        <!-- ================= SECTION 6: INSPECTION (معرض وتقارير الفحص) ================= -->
+        <section id="tab-inspection" class="hidden space-y-6">
+            <div class="omni-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-lg font-bold text-[#333] flex items-center gap-2">
+                        <i data-lucide="camera" class="w-5 h-5 text-purple-600"></i>
+                        تقرير استلام الحاويات ومعرض الصور التوثيقي
+                    </h2>
+                    <p class="text-xs text-[#888] mt-1">توثيق ومعاينة ميدانية لكافة الحاويات المستلمة البالغ عددها 115 حاوية ورصد نسب العيوب والأضرار</p>
+                </div>
+                <button onclick="openNewInspectionModal()" class="admin-only px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow-md">
+                    <i data-lucide="plus-circle" class="w-4 h-4 inline"></i> إضافة تقرير فحص وصور
                 </button>
             </div>
 
-            <form id="movementForm" onsubmit="handleMovementSubmit(event)" class="space-y-3 text-xs">
-                <div>
-                    <label class="block font-bold text-[#555] mb-1">نوع الحركة *</label>
-                    <select id="movType" required class="w-full bg-[#fdf2e9] border border-[#fae5d3] rounded-xl px-3 py-2 text-[#333] font-bold focus:ring-2 focus:ring-[#e67e22]">
-                        <option value="out">صادر / توزيع مبيعات (خصم من الرصيد)</option>
-                        <option value="in">وارد / استلام حاوية (إضافة للرصيد)</option>
-                        <option value="damage">إتلاف / كسر (خصم كـ هدر)</option>
-                    </select>
+            <div class="omni-card p-4 space-y-3">
+                <div class="flex flex-col sm:flex-row justify-between gap-3 items-center">
+                    <span class="text-xs font-bold text-[#333]">البحث الفوري في تقارير ومعرض الحاويات</span>
+                    <input type="text" id="inspectionSearchInput" oninput="filterInspectionGallery()" placeholder="ابحث برقم الحاوية أو الماركة..." class="text-xs px-3 py-1.5 w-64">
+                </div>
+            </div>
+
+            <div id="inspectionCardsContainer" class="space-y-6"></div>
+        </section>
+
+    </main>
+
+    <!-- Modals (Full Room Management Modal - Image 1 Matching) -->
+    <div id="fullRoomModal" class="hidden fixed inset-0 z-50 bg-[#45260a]/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white border border-[#fae5d3] rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4 max-w-lg w-full max-h-[92vh] overflow-y-auto">
+            <div class="flex items-center justify-between border-b border-[#fae5d3] pb-3">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-10 h-10 rounded-xl bg-[#fdf2e9] text-[#e67e22] flex items-center justify-center font-black text-lg font-num">
+                        <span id="fullRoomModalNum">7</span>
+                    </div>
+                    <div>
+                        <h3 id="fullRoomModalTitle" class="font-black text-[#333] text-base">إدارة وتعديل القاعة 7</h3>
+                        <p class="text-xs text-[#888]">تحديث الحالة، الحرارة، ساعات التخمير، والأصناف</p>
+                    </div>
+                </div>
+                <button onclick="closeFullRoomModal()" class="text-[#888] hover:text-[#333] text-sm font-bold">✕</button>
+            </div>
+
+            <form id="fullRoomForm" onsubmit="handleFullRoomSubmit(event)" class="space-y-4 text-xs">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-[#555] mb-1">حالة القاعة *</label>
+                        <select id="modalRoomStatus" onchange="onModalRoomStatusChanged()" class="w-full px-3 py-2 font-bold">
+                            <option value="empty">فارغة (شاغرة)</option>
+                            <option value="ripening">قيد التخمير والإنضاج (إيثيلين)</option>
+                            <option value="cooled">حفظ (جاهزة للصرف)</option>
+                            <option value="unloading">قيد التفريغ والتوزيع</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold text-[#555] mb-1">درجة الحرارة (°C) *</label>
+                        <input type="number" step="0.1" id="modalRoomTemp" required value="14.0" class="w-full px-3 py-2 font-num font-bold">
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block font-bold text-[#555] mb-1">الصنف / الماركة *</label>
-                    <select id="movBrand" required class="w-full bg-[#fdf2e9] border border-[#fae5d3] rounded-xl px-3 py-2 text-[#333] font-bold focus:ring-2 focus:ring-[#e67e22]">
-                        <option value="rosetta">روزيتا (الإكوادور 20كغ)</option>
-                        <option value="extraBan">اكسترا بان (هندي / كوستاريكا)</option>
-                        <option value="delMonte">ديلمونتي (19كغ)</option>
-                        <option value="panaGold">بانا غولد / كولد (20كغ)</option>
-                        <option value="mrBanana">مستر بانانا (20كغ)</option>
-                    </select>
+                <!-- Ripening Timer Auto Box (Image 1) -->
+                <div id="modalRipeningTimingSection" class="p-3.5 bg-[#fdf2e9] border border-[#fae5d3] rounded-2xl space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-[#cf711f] flex items-center gap-1.5 text-xs">
+                            <i data-lucide="clock" class="w-4 h-4"></i>
+                            ساعة التخمير والإنضاج (حساب تلقائي متصل بالتقويم)
+                        </span>
+                        <button type="button" onclick="setModalTimeNow()" class="px-2.5 py-1 bg-white text-[#cf711f] rounded-lg text-[10px] font-bold border border-[#fae5d3]">
+                            ضبط على الوقت الحالي (الآن)
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block text-[#888] mb-1">تاريخ وساعة بدء التخمير:</label>
+                            <input type="datetime-local" id="modalRoomStartTime" onchange="updateModalRipeningCalc()" class="w-full px-2.5 py-1.5 font-num text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[#888] mb-1">مدة التخمير المطلوبة (ساعات):</label>
+                            <div class="flex gap-1">
+                                <input type="number" id="modalRoomTargetHours" min="1" max="120" value="24" onchange="updateModalRipeningCalc()" class="w-16 px-2 py-1 font-num font-bold text-center">
+                                <button type="button" onclick="setModalTargetHours(24)" class="flex-1 py-1 rounded-lg bg-white text-[10px] font-bold">24س</button>
+                                <button type="button" onclick="setModalTargetHours(36)" class="flex-1 py-1 rounded-lg bg-white text-[10px] font-bold">36س</button>
+                                <button type="button" onclick="setModalTargetHours(48)" class="flex-1 py-1 rounded-lg bg-white text-[10px] font-bold">48س</button>
+                                <button type="button" onclick="setModalTargetHours(72)" class="flex-1 py-1 rounded-lg bg-white text-[10px] font-bold">72س</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="modalRipeningLivePreview" class="p-2.5 bg-white rounded-xl border border-[#fae5d3] text-[11px] text-[#555]"></div>
                 </div>
 
-                <div>
-                    <label class="block font-bold text-[#555] mb-1">الكمية (بالطرود / كرتونة) *</label>
-                    <input type="number" id="movQty" min="1" required placeholder="مثال: 250" class="w-full bg-[#fdf2e9] border border-[#fae5d3] rounded-xl px-3 py-2 text-[#333] font-bold focus:ring-2 focus:ring-[#e67e22] font-num">
+                <!-- Room Items -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between">
+                        <label class="font-bold text-[#45260a]">أصناف وكراتين القاعة:</label>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="clearModalRoomItems()" class="text-[10px] text-red-500 font-bold hover:underline">تفريغ القاعة (تصفير)</button>
+                            <button type="button" onclick="addModalRoomItemRow()" class="px-2.5 py-1 bg-[#fdf2e9] text-[#e67e22] rounded-lg text-[10px] font-bold border border-[#fae5d3]">+ إضافة ماركة ثانية</button>
+                        </div>
+                    </div>
+                    <div id="modalRoomItemsContainer" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
+                    <div class="p-2.5 bg-[#fdf2e9] rounded-xl flex items-center justify-between">
+                        <span class="text-[#888] font-bold">مجموع الكراتين بالقاعة:</span>
+                        <span id="modalRoomTotalQty" class="font-num font-black text-[#e67e22] text-sm">0 كرتونة</span>
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block font-bold text-[#555] mb-1">البيان / الزبون / السائق</label>
-                    <input type="text" id="movNote" placeholder="مثال: توزيع أحمد الطالب - دمشق" class="w-full bg-[#fdf2e9] border border-[#fae5d3] rounded-xl px-3 py-2 text-[#333] focus:ring-2 focus:ring-[#e67e22]">
-                </div>
-
-                <div class="pt-3 border-t border-[#fae5d3] flex gap-2 justify-end">
-                    <button type="button" onclick="closeMovementModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#555] font-bold text-xs rounded-xl">إلغاء</button>
-                    <button type="submit" class="px-5 py-2 bg-[#e67e22] hover:bg-[#cf711f] text-white font-bold text-xs rounded-xl shadow-md">حفظ وتحديث الرصيد</button>
+                <div class="flex justify-end gap-2 pt-3 border-t border-[#fae5d3]">
+                    <button type="button" onclick="closeFullRoomModal()" class="px-4 py-2 bg-slate-100 rounded-xl">إلغاء</button>
+                    <button type="submit" class="px-6 py-2 bg-[#e67e22] hover:bg-[#cf711f] text-white font-bold rounded-xl shadow-md">حفظ وتحديث القاعة</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Inspection Modal -->
-    <div id="inspectionModal" class="hidden fixed inset-0 z-50 bg-[#45260a]/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-xl w-full p-6 shadow-2xl border border-[#fae5d3] space-y-4">
+    <!-- Login Modal -->
+    <div id="loginModal" class="hidden fixed inset-0 z-50 bg-[#45260a]/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-[#fae5d3] space-y-4">
             <div class="flex items-center justify-between border-b border-[#fae5d3] pb-3">
-                <h3 class="font-black text-[#333] text-base flex items-center gap-2">
-                    <i data-lucide="clipboard-check" class="w-5 h-5 text-purple-600"></i> فحص استلام حاوية موز
-                </h3>
-                <button type="button" onclick="closeInspectionModal()" class="text-[#888] hover:text-[#333]">
-                    <i data-lucide="x" class="w-5 h-5"></i>
-                </button>
+                <h3 class="font-black text-[#333] text-base">تسجيل دخول المسؤول</h3>
+                <button onclick="closeLoginModal()" class="text-[#888] hover:text-[#333]">✕</button>
             </div>
-
-            <div class="space-y-3 text-xs">
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block font-bold text-[#555] mb-1">رقم الحاوية *</label>
-                        <input type="text" id="inspContNum" placeholder="مثال: 161927" class="w-full bg-[#fdf2e9] border border-[#fae5d3] rounded-xl px-3 py-2 text-[#333] font-bold focus:ring-2 focus:ring-purple-500 font-num">
-                    </div>
-                    <div>
-                        <label class="block font-bold text-[#555] mb-1">الماركة / الصنف *</label>
-                        <select id="inspBrand" class="w-full bg-[#fdf2e9] border border-[#fae5d3] rounded-xl px-3 py-2 text-[#333] font-bold focus:ring-2 focus:ring-purple-500">
-                            <option value="روزيتا">روزيتا</option>
-                            <option value="اكسترا بان">اكسترا بان</option>
-                            <option value="ديلمونتي">ديلمونتي</option>
-                            <option value="بانا غولد">بانا غولد</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="p-3.5 bg-[#fdf2e9] rounded-2xl border border-[#fae5d3] space-y-3">
-                    <div class="font-bold text-purple-700 flex items-center gap-1.5 text-xs">
-                        <i data-lucide="thermometer" class="w-4 h-4"></i> قياسات التبريد ومؤشرات الجودة
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-[#555] font-bold mb-1">حرارة اللب / المسجل (°C) *</label>
-                            <input type="number" step="0.1" id="inspTemp" required value="13.5" class="w-full bg-white border border-[#fae5d3] rounded-xl px-3 py-2 text-[#333] font-mono font-bold focus:border-purple-500 font-num">
-                        </div>
-                        <div>
-                            <label class="block text-[#555] font-bold mb-1">صلابة اللب</label>
-                            <select id="inspPulpPressure" class="w-full bg-white border border-[#fae5d3] rounded-xl px-3 py-2 text-[#333] font-bold focus:border-purple-500">
-                                <option value="جيدة">جيدة</option>
-                                <option value="متوسطة">متوسطة</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
+            <form onsubmit="handleLoginSubmit(event)" class="space-y-3 text-xs">
+                <div id="loginErrorMsg" class="hidden p-2 rounded-xl bg-red-100 text-red-700 font-bold"></div>
                 <div>
-                    <label class="block font-bold text-[#555] mb-1">ملاحظات الفحص</label>
-                    <textarea id="inspNotes" rows="2" placeholder="اكتب تقرير معاينة الشحنة..." class="w-full bg-[#fdf2e9] border border-[#fae5d3] rounded-xl p-3 text-[#333] focus:outline-none focus:ring-2 focus:ring-purple-500"></textarea>
+                    <label class="block font-bold text-[#555] mb-1">البريد الإلكتروني</label>
+                    <input type="email" id="loginEmailInput" required placeholder="admin@najha.com" class="w-full px-3 py-2 font-num">
                 </div>
-            </div>
-
-            <div class="pt-3 border-t border-[#fae5d3] flex gap-2 justify-end">
-                <button type="button" onclick="closeInspectionModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-[#555] font-bold text-xs rounded-xl">إلغاء</button>
-                <button type="button" onclick="saveInspectionReport()" class="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs rounded-xl">حفظ تقرير الفحص</button>
-            </div>
+                <div>
+                    <label class="block font-bold text-[#555] mb-1">كلمة المرور</label>
+                    <input type="password" id="loginPasswordInput" required placeholder="••••••••" class="w-full px-3 py-2">
+                </div>
+                <div class="flex justify-end gap-2 pt-2 border-t border-[#fae5d3]">
+                    <button type="button" onclick="closeLoginModal()" class="px-4 py-2 bg-slate-100 rounded-xl">إلغاء</button>
+                    <button type="submit" id="btnLoginSubmit" class="px-5 py-2 bg-[#e67e22] hover:bg-[#cf711f] text-white font-bold rounded-xl shadow-md">دخول</button>
+                </div>
+            </form>
         </div>
     </div>
 
-    <!-- Admin Login Modal -->
-    <div id="adminModal" class="hidden fixed inset-0 z-50 bg-[#45260a]/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-[#fae5d3] space-y-4 text-center">
-            <div class="w-12 h-12 rounded-2xl bg-[#fdf2e9] text-[#e67e22] flex items-center justify-center mx-auto font-bold text-xl">
-                <i data-lucide="shield-check" class="w-6 h-6"></i>
-            </div>
-            <div>
-                <h3 class="font-black text-[#333] text-base">دخول مسؤول المستودع</h3>
-                <p class="text-xs text-[#888] mt-1">أدخل كلمة المرور لتفعيل التعديل المباشر</p>
-            </div>
-            <div>
-                <input type="password" id="adminPassword" placeholder="كلمة المرور" class="w-full bg-[#fdf2e9] border border-[#fae5d3] rounded-xl px-4 py-2.5 text-center font-bold text-[#333] focus:ring-2 focus:ring-[#e67e22] focus:outline-none">
-            </div>
-            <div class="flex gap-2">
-                <button type="button" onclick="toggleAdminModal(false)" class="w-1/2 py-2 bg-slate-100 hover:bg-slate-200 text-[#555] font-bold text-xs rounded-xl">إلغاء</button>
-                <button type="button" onclick="handleAdminLogin()" class="w-1/2 py-2 bg-[#45260a] hover:bg-[#333] text-white font-bold text-xs rounded-xl">دخول</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer Attribution (Omnifood Aesthetic) -->
-    <footer class="bg-white border-t border-[#fae5d3] py-5 text-center">
+    <!-- Footer Attribution (Omnifood Style) -->
+    <footer class="bg-white border-t border-[#fae5d3] py-5 text-center mt-12">
         <p dir="ltr" class="text-xs text-[#767676] font-mono tracking-wider">
             Developed by <span class="text-[#e67e22] font-black">Mohamad Harba</span>
         </p>
     </footer>
 
-    <!-- Interactive & LocalStorage Scripts -->
+    <!-- Core Scripts (Linked with Firebase, LocalStorage & Chart.js) -->
     <script>
-        // الأرصدة التاريخية المطابقة ليوم 20/10/2026 كمرجع افتراضي
-        const INITIAL_INVENTORY = {
-            rosetta: { name: 'روزيتا (الإكوادور)', spec: '20 كغ كرتون أخضر', start: 9148, in: 23004, out: 19812, rem: 12340, note: 'متوفر بغزارة (قاعات 1، 2، 3، 4)' },
-            extraBan: { name: 'اكسترا بان (كوستاريكا + هند)', spec: '19 كغ + 14 كغ', start: -24, in: 21891, out: 18547, rem: 3320, note: 'المتبقي هندي 14كغ (قاعة 5)' },
-            delMonte: { name: 'ديلمونتي (كوستاريكا)', spec: '19 كغ', start: 0, in: 15600, out: 15536, rem: 64, note: 'شبه منتهي (توزيع كامل)' },
-            panaGold: { name: 'بانا غولد / كولد (الإكوادور)', spec: '20 كغ', start: 0, in: 3240, out: 3239, rem: 1, note: 'تم تسليم كامل الكمية' },
-            mrBanana: { name: 'مستر بانانا (الإكوادور)', spec: '20 كغ', start: 2, in: 0, out: 0, rem: 2, note: 'مدور من شهر 9' }
-        };
+        // Core data structures inherited from verified warehouse ledger
+        const APP_DATA_VERSION = "2026-10-22-omni-hybrid";
+        
+        // Rooms Data (Exact 6 Chambers 7 to 12 as verified in file)
+        let roomsData = [
+            { room: 7, status: "ripening", temp: 14.0, startTime: "2026-10-17T08:00", targetHours: 24, hours: "تخمير 24 ساعة", items: [{ brand: "ديلمونتي 19 كغ", qty: 1972 }, { brand: "اكسترا بان 19 كغ (كوستاريكا)", qty: 261 }] },
+            { room: 8, status: "ripening", temp: 14.5, startTime: "2026-10-16T10:00", targetHours: 48, hours: "تخمير 48 ساعة (هندي)", items: [{ brand: "اكسترا بان 14 كغ (هندي)", qty: 2100 }] },
+            { room: 9, status: "ripening", temp: 14.5, startTime: "2026-10-16T12:00", targetHours: 48, hours: "تخمير 48 ساعة (هندي)", items: [{ brand: "اكسترا بان 14 كغ (هندي)", qty: 2023 }] },
+            { room: 10, status: "ripening", temp: 15.0, startTime: "2026-10-16T14:00", targetHours: 24, hours: "تخمير 24 ساعة", items: [{ brand: "بانا غولد 20 كغ", qty: 3149 }] },
+            { room: 11, status: "ripening", temp: 16.0, startTime: "2026-10-17T16:00", targetHours: 24, hours: "تخمير 24 ساعة", items: [{ brand: "روزيتا 20 كغ", qty: 3183 }] },
+            { room: 12, status: "ripening", temp: 16.0, startTime: "2026-10-18T09:00", targetHours: 24, hours: "تخمير مستمر", items: [{ brand: "روزيتا 20 كغ", qty: 3183 }] }
+        ];
 
-        const STORAGE_KEY = 'najha_warehouse_inventory_data_v1';
-        let inventoryData = {};
-        let stockChartInstance = null;
+        let brandsData = ["روزيتا", "اكسترا بان", "كرين تروبيك", "كوستا سول", "بانا غولد", "ديلمونتي", "اكسترا", "اكسلبان", "مستر بنانا", "نيستا بان"];
+        let merchantsData = ["أحمد الطالب", "عمر العقاد"];
 
-        function loadInventory() {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            if (stored) {
-                try {
-                    inventoryData = JSON.parse(stored);
-                } catch(e) {
-                    inventoryData = JSON.parse(JSON.stringify(INITIAL_INVENTORY));
+        let currentUser = null;
+        let activeTab = 'dashboard';
+
+        function safeCreateIcons() {
+            try {
+                if (window.lucide && typeof window.lucide.createIcons === 'function') {
+                    window.lucide.createIcons();
                 }
-            } else {
-                inventoryData = JSON.parse(JSON.stringify(INITIAL_INVENTORY));
-                saveInventory();
-            }
-            renderUI();
+            } catch (e) {}
         }
 
-        function saveInventory() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(inventoryData));
+        function switchTab(tabId) {
+            activeTab = tabId;
+            const sections = ['dashboard', 'inbound', 'dispatch', 'movement', 'rooms', 'inspection'];
+            sections.forEach(s => {
+                const el = document.getElementById(`tab-${s}`);
+                const btn = document.getElementById(`nav-${s}`);
+                if (el) el.classList.toggle('hidden', s !== tabId);
+                if (btn) btn.classList.toggle('active', s === tabId);
+            });
+            closeAdminDrawer();
+            safeCreateIcons();
         }
 
-        window.resetToInitialData = function() {
-            if (confirm("هل تريد استعادة بيانات وأرصدة إغلاق 20/10 المعتمدة؟")) {
-                inventoryData = JSON.parse(JSON.stringify(INITIAL_INVENTORY));
-                saveInventory();
-                renderUI();
-                alert("تمت استعادة البيانات الأصلية بنجاح!");
+        function openAdminDrawer() {
+            document.getElementById('adminSideDrawer')?.classList.replace('drawer-closed', 'drawer-open');
+            document.getElementById('adminDrawerBackdrop')?.classList.remove('hidden');
+            setTimeout(() => document.getElementById('adminDrawerBackdrop')?.classList.remove('opacity-0'), 10);
+            safeCreateIcons();
+        }
+
+        function closeAdminDrawer() {
+            document.getElementById('adminSideDrawer')?.classList.replace('drawer-open', 'drawer-closed');
+            const bd = document.getElementById('adminDrawerBackdrop');
+            if (bd) {
+                bd.classList.add('opacity-0');
+                setTimeout(() => bd.classList.add('hidden'), 300);
             }
-        };
+        }
 
-        function renderUI() {
-            const tbody = document.getElementById('inventoryTableBody');
-            tbody.innerHTML = '';
+        function toggleAdminDrawer() {
+            const drawer = document.getElementById('adminSideDrawer');
+            if (drawer?.classList.contains('drawer-closed')) openAdminDrawer();
+            else closeAdminDrawer();
+        }
 
-            let totalStart = 0;
-            let totalIn = 0;
-            let totalOut = 0;
-            let totalRem = 0;
+        // Timer Calculations
+        function getRipeningTiming(room) {
+            if (!room.startTime || room.status === 'empty') return null;
+            const start = new Date(room.startTime).getTime();
+            const now = new Date().getTime();
+            const diffMs = now - start;
+            if (isNaN(diffMs)) return null;
 
-            const chartLabels = [];
-            const chartData = [];
+            const target = room.targetHours || 24;
+            const elapsedHours = Math.max(0, diffMs / (1000 * 60 * 60));
+            const progress = Math.min(100, Math.round((elapsedHours / target) * 100));
+            const remainingHours = Math.max(0, target - elapsedHours);
+            const isCompleted = elapsedHours >= target;
 
-            for (const key in inventoryData) {
-                const item = inventoryData[key];
-                totalStart += item.start;
-                totalIn += item.in;
-                totalOut += item.out;
-                totalRem += item.rem;
+            const dObj = new Date(room.startTime);
+            const formattedStart = `${dObj.getDate()}/${dObj.getMonth() + 1} - ${String(dObj.getHours()).padStart(2, '0')}:${String(dObj.getMinutes()).padStart(2, '0')}`;
 
-                chartLabels.push(item.name.split(' ')[0]);
-                chartData.push(item.rem);
+            return {
+                elapsedHours: elapsedHours.toFixed(1),
+                remainingHours: remainingHours.toFixed(1),
+                progress: progress,
+                isCompleted: isCompleted,
+                formattedStart: formattedStart
+            };
+        }
 
-                let alertBadge = `<span class="text-[#888] font-normal">${item.note}</span>`;
-                if (item.rem <= 5) {
-                    alertBadge = `<span class="px-2.5 py-0.5 bg-red-100 text-red-700 text-[10px] font-bold rounded-full font-num">منتهي تقريباً (${item.rem})</span>`;
-                } else if (item.rem <= 100) {
-                    alertBadge = `<span class="px-2.5 py-0.5 bg-[#fae5d3] text-[#cf711f] text-[10px] font-bold rounded-full font-num">مخزون حرج (${item.rem})</span>`;
+        function renderRipeningRooms() {
+            const container = document.getElementById('roomsGridContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            let totalBoxes = 0;
+
+            roomsData.forEach(r => {
+                const roomSum = r.items.reduce((acc, it) => acc + it.qty, 0);
+                totalBoxes += roomSum;
+                const isInactive = r.status === 'empty' || roomSum === 0;
+
+                const card = document.createElement('div');
+                card.className = `omni-card p-5 flex flex-col justify-between ${isInactive ? 'opacity-80' : ''}`;
+
+                let statusBadge = isInactive 
+                    ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500">شاغرة</span>`
+                    : `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#fae5d3] text-[#cf711f]">قيد التخمير</span>`;
+
+                const timing = getRipeningTiming(r);
+                let timingHtml = '';
+                if (timing && r.status === 'ripening') {
+                    timingHtml = `
+                        <div class="p-2.5 bg-[#fdf2e9] rounded-xl space-y-1.5 my-2.5 text-xs">
+                            <div class="flex items-center justify-between text-[11px]">
+                                <span class="font-bold text-[#cf711f] flex items-center gap-1">
+                                    <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                                    ${timing.isCompleted ? 'اكتمل التخمير 100%' : `مضى ${timing.elapsedHours} ساعة`}
+                                </span>
+                                <span class="text-[#888] font-num text-[10px]">${timing.isCompleted ? 'جاهز للتوزيع' : `المتبقي: ${timing.remainingHours}س`}</span>
+                            </div>
+                            <div class="w-full bg-white rounded-full h-2 overflow-hidden border border-[#fae5d3]">
+                                <div class="h-full rounded-full ${timing.isCompleted ? 'bg-emerald-500' : 'bg-gradient-to-r from-[#e67e22] to-amber-400'}" style="width: ${timing.progress}%"></div>
+                            </div>
+                            <div class="flex items-center justify-between text-[10px] text-[#888]">
+                                <span>بدء الإيثيلين: ${timing.formattedStart}</span>
+                                <span class="font-bold font-num text-[#cf711f]">${timing.progress}%</span>
+                            </div>
+                        </div>
+                    `;
                 }
 
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-[#fdf2e9]/50 transition-colors";
-                tr.innerHTML = `
-                    <td class="p-3.5 text-[#333] font-black">${item.name}</td>
-                    <td class="p-3.5 text-[#6f6f6f] font-normal">${item.spec}</td>
-                    <td class="p-3.5 text-blue-700 font-num">${item.start.toLocaleString()}</td>
-                    <td class="p-3.5 text-emerald-700 font-black font-num">${item.in.toLocaleString()}</td>
-                    <td class="p-3.5 text-amber-700 font-num">${item.out.toLocaleString()}</td>
-                    <td class="p-3.5 text-[#333] font-black text-sm font-num">${item.rem.toLocaleString()}</td>
-                    <td class="p-3.5">${alertBadge}</td>
+                let itemsHtml = `
+                    <div class="space-y-1.5 my-2.5">
+                        ${r.items.map(it => `
+                            <div class="flex items-center justify-between p-2 bg-[#fdfaf7] rounded-xl border border-[#fae5d3]/60 text-xs">
+                                <span class="font-bold text-[#333]">${it.brand}</span>
+                                <span class="font-num font-black text-[#e67e22]">${it.qty.toLocaleString()} كرتونة</span>
+                            </div>
+                        `).join('')}
+                    </div>
                 `;
-                tbody.appendChild(tr);
-            }
 
-            document.getElementById('statTotalStock').innerText = totalRem.toLocaleString();
-            document.getElementById('statTotalIn').innerText = totalIn.toLocaleString();
-            document.getElementById('statTotalOut').innerText = totalOut.toLocaleString();
-            document.getElementById('statTotalDamaged').innerText = "428";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between pb-3 border-b border-[#fae5d3]">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-9 h-9 rounded-xl bg-[#fdf2e9] text-[#e67e22] flex items-center justify-center font-black text-sm font-num">
+                                    ${r.room}
+                                </div>
+                                <div>
+                                    <h3 class="font-bold text-[#333] text-sm">القاعة ${r.room}</h3>
+                                    <div class="flex items-center gap-1.5 mt-0.5">
+                                        ${statusBadge}
+                                        <span class="text-[10px] text-[#888] font-num font-bold">${r.temp}°C</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="openFullRoomModal(${r.room})" class="admin-only px-2.5 py-1 bg-[#fdf2e9] hover:bg-[#fae5d3] text-[#cf711f] rounded-xl text-xs font-bold" title="تعديل القاعة">
+                                تعديل
+                            </button>
+                        </div>
+                        ${timingHtml}
+                        ${itemsHtml}
+                    </div>
+                    <div class="pt-3 border-t border-[#fae5d3] flex items-center justify-between text-xs">
+                        <span class="text-[#888] font-bold">مجموع القاعة:</span>
+                        <span class="font-num font-black text-[#333] text-sm">${roomSum.toLocaleString()} كرتونة</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
 
-            document.getElementById('tblTotalStart').innerText = totalStart.toLocaleString();
-            document.getElementById('tblTotalIn').innerText = totalIn.toLocaleString();
-            document.getElementById('tblTotalOut').innerText = totalOut.toLocaleString();
-            document.getElementById('tblTotalRem').innerText = totalRem.toLocaleString();
-
-            updateChart(chartLabels, chartData);
-            lucide.createIcons();
+            document.getElementById('roomsTotalBadge').textContent = totalBoxes.toLocaleString();
+            document.getElementById('kpiCurrentStock').textContent = totalBoxes.toLocaleString();
+            document.getElementById('headerStockBadge').textContent = totalBoxes.toLocaleString() + ' طرد';
+            safeCreateIcons();
         }
 
-        function updateChart(labels, data) {
-            if (stockChartInstance) {
-                stockChartInstance.data.labels = labels;
-                stockChartInstance.data.datasets[0].data = data;
-                stockChartInstance.update();
+        // Room Edit Modal Logic
+        let activeFullRoomNum = null;
+        let modalRoomItems = [];
+
+        function openFullRoomModal(roomNum) {
+            activeFullRoomNum = roomNum;
+            const room = roomsData.find(r => r.room === roomNum);
+            if (!room) return;
+
+            document.getElementById('fullRoomModalNum').textContent = roomNum;
+            document.getElementById('fullRoomModalTitle').textContent = `إدارة وتعديل القاعة ${roomNum}`;
+            document.getElementById('modalRoomStatus').value = room.status;
+            document.getElementById('modalRoomTemp').value = room.temp;
+            document.getElementById('modalRoomStartTime').value = room.startTime || '';
+            document.getElementById('modalRoomTargetHours').value = room.targetHours || 24;
+
+            modalRoomItems = JSON.parse(JSON.stringify(room.items || []));
+            renderModalRoomItems();
+            updateModalRipeningCalc();
+
+            document.getElementById('fullRoomModal')?.classList.remove('hidden');
+            safeCreateIcons();
+        }
+
+        function closeFullRoomModal() {
+            document.getElementById('fullRoomModal')?.classList.add('hidden');
+        }
+
+        function setModalTimeNow() {
+            const now = new Date();
+            const localISO = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+            document.getElementById('modalRoomStartTime').value = localISO;
+            updateModalRipeningCalc();
+        }
+
+        function setModalTargetHours(h) {
+            document.getElementById('modalRoomTargetHours').value = h;
+            updateModalRipeningCalc();
+        }
+
+        function updateModalRipeningCalc() {
+            const previewBox = document.getElementById('modalRipeningLivePreview');
+            const startTimeVal = document.getElementById('modalRoomStartTime').value;
+            const targetHours = parseFloat(document.getElementById('modalRoomTargetHours').value) || 24;
+
+            if (!startTimeVal) {
+                previewBox.innerHTML = '<span class="text-[#888]">حدد تاريخ وساعة بدء التخمير لحساب الوقت تلقائياً.</span>';
+                return;
+            }
+
+            const startMs = new Date(startTimeVal).getTime();
+            const nowMs = new Date().getTime();
+            const diffHours = (nowMs - startMs) / (1000 * 60 * 60);
+
+            if (diffHours >= targetHours) {
+                previewBox.innerHTML = `<span class="text-emerald-600 font-bold">✓ اكتمل التخمير 100%! مضى ${diffHours.toFixed(1)} ساعة. القاعة جاهزة للتوزيع.</span>`;
             } else {
-                const ctxBar = document.getElementById('stockChart').getContext('2d');
-                stockChartInstance = new Chart(ctxBar, {
-                    type: 'bar',
+                previewBox.innerHTML = `<span>⏱️ مضى: <b>${diffHours.toFixed(1)} ساعة</b> | المتبقي: <b>${Math.max(0, targetHours - diffHours).toFixed(1)} ساعة</b></span>`;
+            }
+        }
+
+        function renderModalRoomItems() {
+            const container = document.getElementById('modalRoomItemsContainer');
+            if (!container) return;
+            container.innerHTML = '';
+
+            let total = 0;
+            modalRoomItems.forEach((it, idx) => {
+                total += parseInt(it.qty, 10) || 0;
+                const row = document.createElement('div');
+                row.className = 'flex items-center gap-2 p-2 bg-[#fdfaf7] rounded-xl border border-[#fae5d3]';
+                row.innerHTML = `
+                    <select onchange="modalRoomItems[${idx}].brand = this.value" class="flex-1 px-2.5 py-1.5 text-xs font-bold">
+                        ${brandsData.map(b => `<option value="${b}" ${b === it.brand ? 'selected' : ''}>${b}</option>`).join('')}
+                    </select>
+                    <input type="number" min="0" value="${it.qty}" onchange="modalRoomItems[${idx}].qty = parseInt(this.value, 10) || 0; updateModalRoomTotal();" class="w-24 px-2 py-1.5 text-xs font-num font-bold text-center">
+                    <button type="button" onclick="modalRoomItems.splice(${idx}, 1); renderModalRoomItems();" class="p-1 text-red-500 font-bold">✕</button>
+                `;
+                container.appendChild(row);
+            });
+            updateModalRoomTotal();
+        }
+
+        function addModalRoomItemRow() {
+            modalRoomItems.push({ brand: brandsData[0] || 'روزيتا', qty: 1000 });
+            renderModalRoomItems();
+        }
+
+        function clearModalRoomItems() {
+            modalRoomItems = [];
+            renderModalRoomItems();
+        }
+
+        function updateModalRoomTotal() {
+            const total = modalRoomItems.reduce((acc, it) => acc + (parseInt(it.qty, 10) || 0), 0);
+            document.getElementById('modalRoomTotalQty').textContent = `${total.toLocaleString()} كرتونة`;
+        }
+
+        function handleFullRoomSubmit(e) {
+            e.preventDefault();
+            const room = roomsData.find(r => r.room === activeFullRoomNum);
+            if (!room) return;
+
+            room.status = document.getElementById('modalRoomStatus').value;
+            room.temp = parseFloat(document.getElementById('modalRoomTemp').value) || 14.0;
+            room.startTime = document.getElementById('modalRoomStartTime').value;
+            room.targetHours = parseFloat(document.getElementById('modalRoomTargetHours').value) || 24;
+            room.items = modalRoomItems.filter(it => it.qty > 0);
+
+            renderRipeningRooms();
+            closeFullRoomModal();
+        }
+
+        // Initialize Charts
+        function initCharts() {
+            const ctx = document.getElementById('movementChart')?.getContext('2d');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'line',
                     data: {
-                        labels: labels,
+                        labels: ['01/10', '04/10', '07/10', '10/10', '13/10', '16/10', '18/10'],
                         datasets: [{
-                            label: 'الرصيد الفعلي المتبقي',
-                            data: data,
-                            backgroundColor: ['#e67e22', '#eb984e', '#cf711f', '#f39c12', '#d35400'],
-                            borderRadius: 10,
-                            barThickness: 28
+                            label: 'رصيد المستودع (طرد)',
+                            data: [9623, 10624, 17616, 13592, 16000, 13230, 15871],
+                            borderColor: '#e67e22',
+                            backgroundColor: 'rgba(230, 126, 34, 0.12)',
+                            fill: true,
+                            tension: 0.35,
+                            borderWidth: 3
                         }]
                     },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
                         scales: {
-                            y: { beginAtZero: true, grid: { color: '#fae5d3' }, ticks: { font: { family: 'Rubik' } } },
-                            x: { grid: { display: false }, ticks: { font: { family: 'Cairo', weight: 'bold' } } }
-                        },
-                        plugins: { legend: { display: false } }
+                            y: { grid: { color: '#fae5d3' }, ticks: { font: { family: 'Rubik' } } },
+                            x: { grid: { display: false }, ticks: { font: { family: 'Rubik' } } }
+                        }
                     }
                 });
             }
         }
 
-        let isAdminLoggedIn = false;
+        // Auth handles
+        function openLoginModal() { document.getElementById('loginModal')?.classList.remove('hidden'); }
+        function closeLoginModal() { document.getElementById('loginModal')?.classList.add('hidden'); }
 
-        window.toggleAdminModal = function(show) {
-            document.getElementById('adminModal').classList.toggle('hidden', !show);
-            if (show) setTimeout(() => document.getElementById('adminPassword').focus(), 100);
-        };
-
-        window.handleAdminLogin = function() {
-            const pwd = document.getElementById('adminPassword').value;
-            if (pwd === "1234" || pwd === "admin") {
-                isAdminLoggedIn = true;
-                document.getElementById('adminBadge').classList.remove('hidden');
-                document.getElementById('adminBadge').classList.add('flex');
-                document.getElementById('adminLoginBtn').classList.add('hidden');
-                toggleAdminModal(false);
-                alert("مرحباً بك! تم تفعيل وضع المسؤول والتعديل المباشر على الأرصدة.");
-            } else {
-                alert("كلمة المرور غير صحيحة. جرب (1234 أو admin).");
-            }
-        };
-
-        window.logoutAdmin = function() {
-            isAdminLoggedIn = false;
-            document.getElementById('adminBadge').classList.add('hidden');
-            document.getElementById('adminBadge').classList.remove('flex');
-            document.getElementById('adminLoginBtn').classList.remove('hidden');
-            document.getElementById('adminPassword').value = '';
-        };
-
-        window.openMovementModal = function() {
-            if (!isAdminLoggedIn) {
-                alert("يرجى تسجيل الدخول كمسؤول أولاً لتتمكن من إضافة حركة وتعديل الأرصدة.");
-                toggleAdminModal(true);
-                return;
-            }
-            document.getElementById('movementModal').classList.remove('hidden');
-            lucide.createIcons();
-        };
-
-        window.closeMovementModal = function() {
-            document.getElementById('movementModal').classList.add('hidden');
-            document.getElementById('movementForm').reset();
-        };
-
-        window.handleMovementSubmit = function(e) {
+        function handleLoginSubmit(e) {
             e.preventDefault();
-            const brandKey = document.getElementById('movBrand').value;
-            const type = document.getElementById('movType').value;
-            const qty = parseInt(document.getElementById('movQty').value, 10);
-
-            if (!inventoryData[brandKey]) return;
-
-            if (type === 'in') {
-                inventoryData[brandKey].in += qty;
-                inventoryData[brandKey].rem += qty;
-            } else if (type === 'out') {
-                if (inventoryData[brandKey].rem < qty) {
-                    if (!confirm("الكمية المطلوبة أكبر من الرصيد المتوفر! هل تريد المتابعة على أية حال؟")) return;
-                }
-                inventoryData[brandKey].out += qty;
-                inventoryData[brandKey].rem -= qty;
-            } else if (type === 'damage') {
-                inventoryData[brandKey].rem -= qty;
+            const pwd = document.getElementById('loginPasswordInput').value;
+            if (pwd === "1234" || pwd === "admin") {
+                document.body.classList.remove('visitor-mode');
+                document.getElementById('btnLoginOpen')?.classList.add('hidden');
+                document.getElementById('adminBadgeWrapper')?.classList.remove('hidden');
+                closeLoginModal();
+            } else {
+                alert("كلمة المرور غير صحيحة");
             }
+        }
 
-            saveInventory();
-            renderUI();
-            closeMovementModal();
-            alert(`تم تسجيل الحركة بنجاح وحفظ رصيد ${inventoryData[brandKey].name} الجديد في المتصفح!`);
-        };
-
-        window.openInspectionModal = function() {
-            document.getElementById('inspectionModal').classList.remove('hidden');
-            lucide.createIcons();
-        };
-        window.closeInspectionModal = function() {
-            document.getElementById('inspectionModal').classList.add('hidden');
-        };
-        window.saveInspectionReport = function() {
-            alert("تم حفظ تقرير فحص الحاوية بنجاح وتحديث قياسات صلابة اللب والحرارة!");
-            closeInspectionModal();
-        };
-
-        window.switchTab = function(tabId) {
-            document.querySelectorAll('[id^="section-"]').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.classList.remove('active');
-                btn.classList.add('text-[#6f6f6f]');
-            });
-            const targetSection = document.getElementById('section-' + tabId);
-            if (targetSection) targetSection.classList.remove('hidden');
-            const activeBtn = document.getElementById('tab-' + tabId);
-            if (activeBtn) {
-                activeBtn.classList.add('active');
-                activeBtn.classList.remove('text-[#6f6f6f]');
-            }
-            lucide.createIcons();
-        };
-
-        const ctxDonut = document.getElementById('occupancyChart').getContext('2d');
-        new Chart(ctxDonut, {
-            type: 'doughnut',
-            data: {
-                datasets: [{
-                    data: [5, 1],
-                    backgroundColor: ['#e67e22', '#fae5d3'],
-                    borderWidth: 0,
-                    circumference: 360,
-                    cutout: '76%'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false }, tooltip: { enabled: false } }
-            }
-        });
+        function handleLogout() {
+            document.body.classList.add('visitor-mode');
+            document.getElementById('btnLoginOpen')?.classList.remove('hidden');
+            document.getElementById('adminBadgeWrapper')?.classList.add('hidden');
+        }
 
         window.addEventListener('DOMContentLoaded', () => {
-            loadInventory();
+            renderRipeningRooms();
+            initCharts();
+            safeCreateIcons();
         });
     </script>
 </body>
