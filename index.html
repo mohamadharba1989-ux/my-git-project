@@ -42,7 +42,6 @@
             font-variant-numeric: tabular-nums;
         }
 
-        /* Omnifood Card Elevation, Border & Hover Lift */
         .omni-card {
             background-color: #ffffff;
             border-radius: 18px;
@@ -57,7 +56,6 @@
             border-color: #eb984e;
         }
 
-        /* Navigation Pills */
         .omni-nav-pill {
             display: inline-flex;
             align-items: center;
@@ -82,7 +80,6 @@
             box-shadow: 0 6px 18px rgba(230, 126, 34, 0.35) !important;
         }
 
-        /* Table Design */
         table {
             border-collapse: separate;
             border-spacing: 0;
@@ -108,7 +105,6 @@
             background-color: #fdf2e9/50;
         }
 
-        /* Form Inputs */
         input, select, textarea {
             background-color: #ffffff !important;
             border: 1px solid #e0d0c1 !important;
@@ -123,7 +119,6 @@
             box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.2) !important;
         }
 
-        /* Hide elements requiring admin auth */
         body.visitor-mode .admin-only {
             display: none !important;
         }
@@ -135,17 +130,15 @@
 </head>
 <body class="min-h-screen flex flex-col antialiased visitor-mode">
 
-    <!-- Top Sticky & Transparent Navbar -->
+    <!-- Top Sticky Navbar -->
     <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-[#fae5d3] shadow-sm w-full transition-all">
         <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 w-full py-3.5 flex items-center justify-between gap-3">
             
-            <!-- Right: Logo & Company -->
             <div class="flex items-center gap-3">
                 <button onclick="toggleAdminDrawer()" class="lg:hidden p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-[#fdf2e9] border border-[#fae5d3]" title="قائمة الأقسام">
                     <i data-lucide="menu" class="w-5 h-5 text-[#e67e22]"></i>
                 </button>
 
-                <!-- Eagle Shield Crest -->
                 <div class="h-11 w-15 sm:h-12 sm:w-20 bg-gradient-to-b from-slate-900 via-slate-950 to-black p-1 rounded-xl border-2 border-amber-400/70 flex items-center justify-center shadow-md shadow-orange-500/10 shrink-0 cursor-pointer" onclick="switchTab('dashboard')" title="شركة النسر التجارية - الرئيسية">
                     <span class="text-amber-400 font-black text-sm tracking-widest font-num">AL-NESER</span>
                 </div>
@@ -159,14 +152,12 @@
                 </div>
             </div>
 
-            <!-- Left: Stats & Login -->
             <div class="flex items-center gap-2 sm:gap-3 shrink-0">
                 <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#fdf2e9] border border-[#fae5d3] text-xs">
                     <span class="text-[#6f6f6f] font-semibold">رصيد المستودع الفعلي:</span>
                     <span class="font-black text-[#cf711f] font-num" id="headerStockBadge">15,871 طرد</span>
                 </div>
 
-                <!-- Admin Action Buttons -->
                 <button id="btnLoginOpen" onclick="openLoginModal()" class="px-4 py-2 text-xs sm:text-sm font-bold text-white bg-[#45260a] hover:bg-[#333] rounded-xl shadow-md flex items-center gap-1.5 transition-all">
                     <i data-lucide="lock" class="w-3.5 h-3.5 text-[#ffd43b]"></i>
                     <span>دخول مسؤول</span>
@@ -184,7 +175,6 @@
             </div>
         </div>
 
-        <!-- Subnav: 6 Main Sections (Desktop) -->
         <div class="border-t border-[#fae5d3]/70 bg-white/70 hidden lg:block">
             <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between overflow-x-auto">
                 <nav class="flex items-center gap-2 py-2">
@@ -224,7 +214,6 @@
                     </button>
                 </nav>
 
-                <!-- Directory Modals Quick Links -->
                 <div class="flex items-center gap-2 py-2">
                     <button onclick="openDriverModal()" class="omni-nav-pill text-xs">
                         <i data-lucide="users" class="w-3.5 h-3.5 text-blue-600"></i>
@@ -239,61 +228,16 @@
         </div>
     </header>
 
-    <!-- Mobile Drawer -->
-    <div id="adminDrawerBackdrop" onclick="closeAdminDrawer()" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm lg:hidden transition-opacity duration-300 opacity-0"></div>
-
-    <aside id="adminSideDrawer" class="drawer-closed fixed top-0 right-0 z-50 flex h-screen w-72 flex-col bg-white border-l border-[#fae5d3] duration-300 ease-linear lg:hidden shadow-2xl">
-        <div class="p-4 border-b border-[#fae5d3] flex items-center justify-between bg-[#fdf2e9]">
-            <h2 class="font-extrabold text-[#45260a] text-sm">مستودع نجها - شركة النسر</h2>
-            <button onclick="closeAdminDrawer()" class="p-1.5 rounded-xl text-slate-500 hover:text-slate-900" title="إغلاق">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-        </div>
-        <div class="flex-1 overflow-y-auto p-4 space-y-2">
-            <button onclick="switchTab('dashboard')" class="w-full text-right px-3 py-2.5 rounded-xl text-xs font-bold hover:bg-[#fdf2e9] flex items-center gap-2.5">
-                <i data-lucide="layout-dashboard" class="w-4 h-4 text-[#e67e22]"></i>
-                <span>الرئيسية والمؤشرات</span>
-            </button>
-            <button onclick="switchTab('inbound')" class="w-full text-right px-3 py-2.5 rounded-xl text-xs font-bold hover:bg-[#fdf2e9] flex items-center gap-2.5">
-                <i data-lucide="arrow-down-left" class="w-4 h-4 text-blue-600"></i>
-                <span class="flex-1">استلام الحاويات</span>
-                <span class="bg-blue-100 text-blue-800 text-[10px] px-2 py-0.5 rounded-full font-num font-bold">115</span>
-            </button>
-            <button onclick="switchTab('dispatch')" class="w-full text-right px-3 py-2.5 rounded-xl text-xs font-bold hover:bg-[#fdf2e9] flex items-center gap-2.5">
-                <i data-lucide="arrow-up-right" class="w-4 h-4 text-emerald-600"></i>
-                <span class="flex-1">التوزيع والشحن</span>
-                <span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded-full font-num font-bold">602</span>
-            </button>
-            <button onclick="switchTab('movement')" class="w-full text-right px-3 py-2.5 rounded-xl text-xs font-bold hover:bg-[#fdf2e9] flex items-center gap-2.5">
-                <i data-lucide="activity" class="w-4 h-4 text-cyan-600"></i>
-                <span class="flex-1">حركة المستودع والأرصدة</span>
-                <span class="bg-cyan-100 text-cyan-800 text-[10px] px-2 py-0.5 rounded-full font-num font-bold">48 يوماً</span>
-            </button>
-            <button onclick="switchTab('rooms')" class="w-full text-right px-3 py-2.5 rounded-xl text-xs font-bold hover:bg-[#fdf2e9] flex items-center gap-2.5">
-                <i data-lucide="boxes" class="w-4 h-4 text-amber-600"></i>
-                <span class="flex-1">قاعات التخمير</span>
-                <span class="bg-amber-100 text-amber-800 text-[10px] px-2 py-0.5 rounded-full font-num font-bold">15,871</span>
-            </button>
-            <button onclick="switchTab('inspection')" class="w-full text-right px-3 py-2.5 rounded-xl text-xs font-bold hover:bg-[#fdf2e9] flex items-center gap-2.5">
-                <i data-lucide="camera" class="w-4 h-4 text-purple-600"></i>
-                <span class="flex-1">معرض وتقارير الفحص</span>
-                <span class="bg-purple-100 text-purple-800 text-[10px] px-2 py-0.5 rounded-full font-num font-bold">115</span>
-            </button>
-        </div>
-    </aside>
-
     <!-- Main Workspace -->
     <main class="flex-1 max-w-[1440px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
 
-        <!-- Notification Toast -->
         <div id="toastNotification" class="fixed bottom-5 left-5 z-50 transform translate-y-24 opacity-0 transition-all duration-300 bg-white border border-[#fae5d3] p-4 rounded-2xl shadow-2xl flex items-center gap-3">
             <div id="toastIcon" class="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">✓</div>
             <div id="toastMsg" class="text-sm font-bold text-[#333]">تمت العملية بنجاح</div>
         </div>
 
-        <!-- ================= SECTION 1: DASHBOARD ================= -->
+        <!-- Dashboard -->
         <section id="tab-dashboard" class="space-y-6">
-            <!-- Global Live Calendar Bar -->
             <div class="omni-card p-4 sm:p-5 border border-[#fae5d3] space-y-3">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#fae5d3]">
                     <div class="flex items-center gap-2.5">
@@ -309,7 +253,6 @@
                         </div>
                     </div>
 
-                    <!-- Date Controls -->
                     <div class="flex items-center gap-2 self-end sm:self-auto">
                         <button type="button" onclick="navigateCalendarDay(-1)" class="p-2 rounded-xl bg-[#fdf2e9] hover:bg-[#fae5d3] text-[#45260a] text-xs font-bold" title="اليوم السابق">
                             <i data-lucide="chevron-right" class="w-4 h-4"></i>
@@ -324,7 +267,6 @@
                     </div>
                 </div>
 
-                <!-- Calendar Daily Metric Cards -->
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
                     <div class="p-3 bg-[#fdf2e9]/60 rounded-xl border border-[#fae5d3] flex flex-col justify-between">
                         <span class="text-[#888] font-bold">رصيد بداية اليوم</span>
@@ -357,7 +299,6 @@
                 </div>
             </div>
 
-            <!-- 4 Top Cards (Omnifood Style) -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="omni-card p-5">
                     <div class="flex items-center justify-between mb-2">
@@ -424,7 +365,6 @@
                 </div>
             </div>
 
-            <!-- Charts Section -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div class="lg:col-span-2 omni-card p-6">
                     <div class="flex items-center justify-between mb-4 border-b border-[#fae5d3] pb-3">
@@ -475,7 +415,7 @@
             </div>
         </section>
 
-        <!-- ================= SECTION 2: INBOUND (استلام الحاويات) ================= -->
+        <!-- Inbound -->
         <section id="tab-inbound" class="hidden space-y-6">
             <div class="omni-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
@@ -495,7 +435,6 @@
                 </div>
             </div>
 
-            <!-- Inbound Form -->
             <div id="newInboundFormCard" class="hidden admin-only omni-card p-6 shadow-xl">
                 <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#fae5d3]">
                     <h3 class="font-bold text-[#333] text-sm">إدخال بيان حاوية استلام جديدة</h3>
@@ -544,7 +483,6 @@
                 </form>
             </div>
 
-            <!-- Inbound Table -->
             <div class="omni-card overflow-hidden">
                 <div class="p-4 border-b border-[#fae5d3] flex justify-between items-center">
                     <span class="text-xs font-bold text-[#333]">سجل الشحنات المستلمة</span>
@@ -576,7 +514,7 @@
             </div>
         </section>
 
-        <!-- ================= SECTION 3: DISPATCH (التوزيع والشحن) ================= -->
+        <!-- Dispatch -->
         <section id="tab-dispatch" class="hidden space-y-6">
             <div class="omni-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
@@ -593,7 +531,6 @@
                 </div>
             </div>
 
-            <!-- Dispatch Form -->
             <div id="newDispatchFormCard" class="hidden admin-only omni-card p-6 shadow-xl">
                 <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#fae5d3]">
                     <h3 class="font-bold text-[#333] text-sm">تسجيل إرسالية توزيع وصرف جديدة</h3>
@@ -639,7 +576,6 @@
                 </form>
             </div>
 
-            <!-- Dispatch Table -->
             <div class="omni-card overflow-hidden">
                 <div class="p-4 border-b border-[#fae5d3] flex justify-between items-center">
                     <span class="text-xs font-bold text-[#333]">سجل أذونات التوزيع</span>
@@ -673,7 +609,7 @@
             </div>
         </section>
 
-        <!-- ================= SECTION 4: MOVEMENT (حركة المستودع) ================= -->
+        <!-- Movement -->
         <section id="tab-movement" class="hidden space-y-6">
             <div class="omni-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
@@ -711,7 +647,7 @@
             </div>
         </section>
 
-        <!-- ================= SECTION 5: ROOMS (قاعات التخمير) ================= -->
+        <!-- Rooms -->
         <section id="tab-rooms" class="hidden space-y-6">
             <div class="omni-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
@@ -726,11 +662,10 @@
                 </div>
             </div>
 
-            <!-- Rooms Grid (Cards 7 to 12) -->
             <div id="roomsGridContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"></div>
         </section>
 
-        <!-- ================= SECTION 6: INSPECTION (معرض وتقارير الفحص) ================= -->
+        <!-- Inspection -->
         <section id="tab-inspection" class="hidden space-y-6">
             <div class="omni-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
@@ -757,7 +692,7 @@
 
     </main>
 
-    <!-- Modals (Full Room Management Modal - Image 1 Matching) -->
+    <!-- Full Room Management Modal -->
     <div id="fullRoomModal" class="hidden fixed inset-0 z-50 bg-[#45260a]/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
         <div class="bg-white border border-[#fae5d3] rounded-3xl p-5 sm:p-6 shadow-2xl space-y-4 max-w-lg w-full max-h-[92vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-[#fae5d3] pb-3">
@@ -790,7 +725,6 @@
                     </div>
                 </div>
 
-                <!-- Ripening Timer Auto Box (Image 1) -->
                 <div id="modalRipeningTimingSection" class="p-3.5 bg-[#fdf2e9] border border-[#fae5d3] rounded-2xl space-y-3">
                     <div class="flex items-center justify-between">
                         <span class="font-bold text-[#cf711f] flex items-center gap-1.5 text-xs">
@@ -822,7 +756,6 @@
                     <div id="modalRipeningLivePreview" class="p-2.5 bg-white rounded-xl border border-[#fae5d3] text-[11px] text-[#555]"></div>
                 </div>
 
-                <!-- Room Items -->
                 <div class="space-y-2">
                     <div class="flex items-center justify-between">
                         <label class="font-bold text-[#45260a]">أصناف وكراتين القاعة:</label>
@@ -846,70 +779,55 @@
         </div>
     </div>
 
-    <!-- Login Modal -->
+    <!-- Login Modal (Strict Firebase Auth) -->
     <div id="loginModal" class="hidden fixed inset-0 z-50 bg-[#45260a]/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-[#fae5d3] space-y-4">
             <div class="flex items-center justify-between border-b border-[#fae5d3] pb-3">
                 <h3 class="font-black text-[#333] text-base">تسجيل دخول المسؤول</h3>
                 <button onclick="closeLoginModal()" class="text-[#888] hover:text-[#333]">✕</button>
             </div>
-           async function handleLoginSubmit(e) {
-    e.preventDefault();
-    const email = document.getElementById('loginEmailInput').value.trim();
-    const pass = document.getElementById('loginPasswordInput').value;
-    const errDiv = document.getElementById('loginErrorMsg');
-
-    // خيار احتياطي في حال عدم توفر اتصال بالإنترنت
-    if (pass === "1234" || pass === "admin") {
-        document.body.classList.remove('visitor-mode');
-        document.getElementById('btnLoginOpen')?.classList.add('hidden');
-        document.getElementById('adminBadgeWrapper')?.classList.remove('hidden');
-        const adminEmailSpan = document.getElementById('adminUserEmail');
-        if (adminEmailSpan) adminEmailSpan.textContent = email ? email.split('@')[0] : 'مسؤول النظام';
-        closeLoginModal();
-        return;
-    }
-
-    try {
-        // التحقق الرسمي عبر خوادم Firebase
-        const userCredential = await auth.signInWithEmailAndPassword(email, pass);
-        currentUser = userCredential.user;
-        
-        document.body.classList.remove('visitor-mode');
-        document.getElementById('btnLoginOpen')?.classList.add('hidden');
-        document.getElementById('adminBadgeWrapper')?.classList.remove('hidden');
-        
-        const adminEmailSpan = document.getElementById('adminUserEmail');
-        if (adminEmailSpan) adminEmailSpan.textContent = currentUser.email.split('@')[0];
-
-        closeLoginModal();
-    } catch (error) {
-        console.error("Firebase Login Error:", error);
-        if (errDiv) {
-            errDiv.textContent = "بيانات الدخول غير صحيحة، أو الحساب غير مسجل في Firebase.";
-            errDiv.classList.remove('hidden');
-        } else {
-            alert("البريد الإلكتروني أو كلمة المرور غير صحيحة!");
-        }
-    }
-}
+            <p class="text-xs text-[#888]">أدخل البريد الإلكتروني وكلمة المرور المسجلة في Firebase Authentication.</p>
+            <form onsubmit="handleLoginSubmit(event)" class="space-y-3 text-xs">
+                <div id="loginErrorMsg" class="hidden p-2 rounded-xl bg-red-100 text-red-700 font-bold"></div>
+                <div>
+                    <label class="block font-bold text-[#555] mb-1">البريد الإلكتروني *</label>
+                    <input type="email" id="loginEmailInput" required placeholder="admin@najha.com" class="w-full px-3 py-2 font-num">
+                </div>
+                <div>
+                    <label class="block font-bold text-[#555] mb-1">كلمة المرور *</label>
+                    <input type="password" id="loginPasswordInput" required placeholder="••••••••" class="w-full px-3 py-2">
+                </div>
+                <div class="flex justify-end gap-2 pt-2 border-t border-[#fae5d3]">
+                    <button type="button" onclick="closeLoginModal()" class="px-4 py-2 bg-slate-100 rounded-xl">إلغاء</button>
+                    <button type="submit" id="btnLoginSubmit" class="px-5 py-2 bg-[#e67e22] hover:bg-[#cf711f] text-white font-bold rounded-xl shadow-md">دخول سحابي</button>
+                </div>
             </form>
         </div>
     </div>
 
-    <!-- Footer Attribution (Omnifood Style) -->
     <footer class="bg-white border-t border-[#fae5d3] py-5 text-center mt-12">
         <p dir="ltr" class="text-xs text-[#767676] font-mono tracking-wider">
             Developed by <span class="text-[#e67e22] font-black">Mohamad Harba</span>
         </p>
     </footer>
 
-    <!-- Core Scripts (Linked with Firebase, LocalStorage & Chart.js) -->
     <script>
-        // Core data structures inherited from verified warehouse ledger
-        const APP_DATA_VERSION = "2026-10-22-omni-hybrid";
+        const APP_DATA_VERSION = "2026-10-22-omni-strict-auth";
         
-        // Rooms Data (Exact 6 Chambers 7 to 12 as verified in file)
+        const firebaseConfig = {
+            apiKey: "AIzaSyACDHNGKLPOhNQySf2CS2DnufNh7IrKQU0",
+            authDomain: "najha-store.firebaseapp.com",
+            projectId: "najha-store",
+            storageBucket: "najha-store.firebasestorage.app",
+            messagingSenderId: "494730546853",
+            appId: "1:494730546853:web:c2f29cc7b11e69b8ed874c",
+            measurementId: "G-B6D2H4ES9V"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
         let roomsData = [
             { room: 7, status: "ripening", temp: 14.0, startTime: "2026-10-17T08:00", targetHours: 24, hours: "تخمير 24 ساعة", items: [{ brand: "ديلمونتي 19 كغ", qty: 1972 }, { brand: "اكسترا بان 19 كغ (كوستاريكا)", qty: 261 }] },
             { room: 8, status: "ripening", temp: 14.5, startTime: "2026-10-16T10:00", targetHours: 48, hours: "تخمير 48 ساعة (هندي)", items: [{ brand: "اكسترا بان 14 كغ (هندي)", qty: 2100 }] },
@@ -924,6 +842,67 @@
 
         let currentUser = null;
         let activeTab = 'dashboard';
+
+        // Firebase Auth State Observer
+        auth.onAuthStateChanged(user => {
+            currentUser = user;
+            const body = document.body;
+            const loginBtn = document.getElementById('btnLoginOpen');
+            const adminBadge = document.getElementById('adminBadgeWrapper');
+            const adminEmailSpan = document.getElementById('adminUserEmail');
+
+            if (user) {
+                body.classList.remove('visitor-mode');
+                loginBtn?.classList.add('hidden');
+                adminBadge?.classList.remove('hidden');
+                if (adminEmailSpan) adminEmailSpan.textContent = user.email.split('@')[0];
+                showToast(`مرحباً بك: ${user.email} - تم تفعيل صلاحيات المسؤول`);
+            } else {
+                body.classList.add('visitor-mode');
+                loginBtn?.classList.remove('hidden');
+                adminBadge?.classList.add('hidden');
+            }
+            renderRipeningRooms();
+            safeCreateIcons();
+        });
+
+        // Strict Firebase Login Handler (No 1234 Fallback)
+        async function handleLoginSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('loginEmailInput').value.trim();
+            const pass = document.getElementById('loginPasswordInput').value;
+            const errDiv = document.getElementById('loginErrorMsg');
+            const submitBtn = document.getElementById('btnLoginSubmit');
+
+            try {
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'جارٍ التحقق عبر Firebase...';
+                }
+                const userCredential = await auth.signInWithEmailAndPassword(email, pass);
+                currentUser = userCredential.user;
+                closeLoginModal();
+                showToast('تم تسجيل الدخول بنجاح عبر سحابة Firebase');
+            } catch (error) {
+                console.error("Firebase Login Error:", error);
+                if (errDiv) {
+                    errDiv.textContent = "البريد الإلكتروني أو كلمة المرور غير صحيحة في Firebase.";
+                    errDiv.classList.remove('hidden');
+                } else {
+                    alert("فشل تسجيل الدخول: البريد الإلكتروني أو كلمة المرور غير صحيحة.");
+                }
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'دخول سحابي';
+                }
+            }
+        }
+
+        async function handleLogout() {
+            await auth.signOut();
+            showToast('تم تسجيل الخروج والعودة لوضع الزائر');
+        }
 
         function safeCreateIcons() {
             try {
@@ -968,7 +947,6 @@
             else closeAdminDrawer();
         }
 
-        // Timer Calculations
         function getRipeningTiming(room) {
             if (!room.startTime || room.status === 'empty') return null;
             const start = new Date(room.startTime).getTime();
@@ -1083,7 +1061,6 @@
             safeCreateIcons();
         }
 
-        // Room Edit Modal Logic
         let activeFullRoomNum = null;
         let modalRoomItems = [];
 
@@ -1149,9 +1126,7 @@
             if (!container) return;
             container.innerHTML = '';
 
-            let total = 0;
             modalRoomItems.forEach((it, idx) => {
-                total += parseInt(it.qty, 10) || 0;
                 const row = document.createElement('div');
                 row.className = 'flex items-center gap-2 p-2 bg-[#fdfaf7] rounded-xl border border-[#fae5d3]';
                 row.innerHTML = `
@@ -1196,7 +1171,6 @@
             closeFullRoomModal();
         }
 
-        // Initialize Charts
         function initCharts() {
             const ctx = document.getElementById('movementChart')?.getContext('2d');
             if (ctx) {
@@ -1227,27 +1201,22 @@
             }
         }
 
-        // Auth handles
         function openLoginModal() { document.getElementById('loginModal')?.classList.remove('hidden'); }
         function closeLoginModal() { document.getElementById('loginModal')?.classList.add('hidden'); }
 
-        function handleLoginSubmit(e) {
-            e.preventDefault();
-            const pwd = document.getElementById('loginPasswordInput').value;
-            if (pwd === "1234" || pwd === "admin") {
-                document.body.classList.remove('visitor-mode');
-                document.getElementById('btnLoginOpen')?.classList.add('hidden');
-                document.getElementById('adminBadgeWrapper')?.classList.remove('hidden');
-                closeLoginModal();
-            } else {
-                alert("كلمة المرور غير صحيحة");
-            }
+        async function handleLogout() {
+            await auth.signOut();
+            showToast('تم تسجيل الخروج والعودة لوضع الزائر');
         }
 
-        function handleLogout() {
-            document.body.classList.add('visitor-mode');
-            document.getElementById('btnLoginOpen')?.classList.remove('hidden');
-            document.getElementById('adminBadgeWrapper')?.classList.add('hidden');
+        function showToast(msg) {
+            const t = document.getElementById('toastNotification');
+            const m = document.getElementById('toastMsg');
+            if (t && m) {
+                m.textContent = msg;
+                t.classList.remove('translate-y-24', 'opacity-0');
+                setTimeout(() => t.classList.add('translate-y-24', 'opacity-0'), 3500);
+            }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
