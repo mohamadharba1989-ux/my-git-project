@@ -246,8 +246,8 @@
                         </div>
                         <div>
                             <div class="flex items-center gap-2">
-                                <h3 class="font-extrabold text-xs sm:text-sm text-[#45260a]">تقويم حركة المستودع اليومية</h3>
-                                <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">مباشر</span>
+                                <h3 class="font-extrabold text-xs sm:text-sm text-[#45260a]">تقويم حركة المستودع اليومية (مرتبط بنظام الوقت)</h3>
+                                <span class="px-2 py-0.5 text-[10px] font-bold rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200">حفظ تلقائي</span>
                             </div>
                             <p id="calendarDayLabel" class="text-xs text-[#888]">الأحد، 18 تشرين الأول 2026</p>
                         </div>
@@ -415,7 +415,7 @@
             </div>
         </section>
 
-        <!-- Inbound -->
+        <!-- Inbound (with Auto Calendar Date) -->
         <section id="tab-inbound" class="hidden space-y-6">
             <div class="omni-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
@@ -423,7 +423,7 @@
                         <i data-lucide="arrow-down-left" class="w-5 h-5 text-blue-600"></i>
                         سجل استلام الحاويات وشحنات الموز
                     </h2>
-                    <p id="inboundDescText" class="text-xs text-[#888] mt-1">توثيق كامل لكافة الحاويات الـ <span id="dynInboundContCount" class="font-bold text-blue-600 font-num">115</span> المستلمة من المرفأ وباب الهوى بإجمالي <span id="dynInboundBoxesCount" class="font-bold text-[#333] font-num">129,731</span> كرتونة</p>
+                    <p id="inboundDescText" class="text-xs text-[#888] mt-1">توثيق كامل لكافة الحاويات المستلمة</p>
                 </div>
                 <div class="flex items-center gap-2">
                     <button onclick="openBrandsModal()" class="px-3.5 py-2 bg-[#fdf2e9] text-[#e67e22] border border-[#fae5d3] rounded-xl text-xs font-bold">
@@ -437,7 +437,7 @@
 
             <div id="newInboundFormCard" class="hidden admin-only omni-card p-6 shadow-xl">
                 <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#fae5d3]">
-                    <h3 class="font-bold text-[#333] text-sm">إدخال بيان حاوية استلام جديدة</h3>
+                    <h3 class="font-bold text-[#333] text-sm">إدخال بيان حاوية استلام جديدة (يُسجل الوقت والتاريخ تلقائياً)</h3>
                     <button onclick="toggleInboundForm()" class="text-[#888] hover:text-[#333] text-xs font-bold">✕ إلغاء</button>
                 </div>
                 <form id="inboundForm" onsubmit="handleNewInbound(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
@@ -446,8 +446,8 @@
                         <input type="text" id="inContNumber" required placeholder="مثال: 161927" class="w-full px-3 py-2 font-num">
                     </div>
                     <div>
-                        <label class="block font-bold text-[#555] mb-1">تاريخ الوصول *</label>
-                        <input type="date" id="inDate" required value="2026-10-18" class="w-full px-3 py-2 font-num">
+                        <label class="block font-bold text-[#555] mb-1">تاريخ الوصول (تلقائي من التقويم) *</label>
+                        <input type="date" id="inDate" required class="w-full px-3 py-2 font-num font-bold bg-amber-50">
                     </div>
                     <div>
                         <label class="block font-bold text-[#555] mb-1">جهة القدوم</label>
@@ -478,7 +478,7 @@
                     </div>
                     <div class="col-span-full flex justify-end gap-2 pt-2 border-t border-[#fae5d3]">
                         <button type="button" onclick="toggleInboundForm()" class="px-4 py-2 bg-slate-100 rounded-xl">إلغاء</button>
-                        <button type="submit" class="px-6 py-2 bg-[#e67e22] hover:bg-[#cf711f] text-white font-bold rounded-xl shadow-md">حفظ واستلام</button>
+                        <button type="submit" class="px-6 py-2 bg-[#e67e22] hover:bg-[#cf711f] text-white font-bold rounded-xl shadow-md">حفظ واستلام تلقائي</button>
                     </div>
                 </form>
             </div>
@@ -514,7 +514,7 @@
             </div>
         </section>
 
-        <!-- Dispatch -->
+        <!-- Dispatch (with Auto Calendar Date) -->
         <section id="tab-dispatch" class="hidden space-y-6">
             <div class="omni-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
@@ -522,7 +522,7 @@
                         <i data-lucide="arrow-up-right" class="w-5 h-5 text-emerald-600"></i>
                         أذونات التوزيع والشحن لدمشق (<span id="dynDispatchTransCount" class="font-num">602</span> إرسالية)
                     </h2>
-                    <p id="dispatchDescText" class="text-xs text-[#888] mt-1">توثيق شامل لكافة الإرساليات المنصرفة لأسواق دمشق بإجمالي <span id="dynDispatchBoxesCount" class="font-bold text-[#333] font-num">124,134</span> كرتونة موز</p>
+                    <p id="dispatchDescText" class="text-xs text-[#888] mt-1">توثيق شامل لكافة الإرساليات المنصرفة</p>
                 </div>
                 <div class="flex items-center gap-2">
                     <button onclick="toggleDispatchForm()" class="admin-only px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md">
@@ -533,7 +533,7 @@
 
             <div id="newDispatchFormCard" class="hidden admin-only omni-card p-6 shadow-xl">
                 <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#fae5d3]">
-                    <h3 class="font-bold text-[#333] text-sm">تسجيل إرسالية توزيع وصرف جديدة</h3>
+                    <h3 class="font-bold text-[#333] text-sm">تسجيل إرسالية توزيع وصرف جديدة (يُسجل الوقت والتاريخ تلقائياً)</h3>
                     <button onclick="toggleDispatchForm()" class="text-[#888] hover:text-[#333] text-xs font-bold">✕ إلغاء</button>
                 </div>
                 <form id="dispatchForm" onsubmit="handleNewDispatch(event)" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
@@ -566,12 +566,12 @@
                         <input type="text" id="dispDestination" required value="دمشق" class="w-full px-3 py-2">
                     </div>
                     <div>
-                        <label class="block font-bold text-[#555] mb-1">تاريخ التحميل</label>
-                        <input type="date" id="dispDate" required value="2026-10-18" class="w-full px-3 py-2 font-num">
+                        <label class="block font-bold text-[#555] mb-1">تاريخ التحميل (تلقائي من التقويم) *</label>
+                        <input type="date" id="dispDate" required class="w-full px-3 py-2 font-num font-bold bg-emerald-50">
                     </div>
                     <div class="col-span-full flex justify-end gap-2 pt-2 border-t border-[#fae5d3]">
                         <button type="button" onclick="toggleDispatchForm()" class="px-4 py-2 bg-slate-100 rounded-xl">إلغاء</button>
-                        <button type="submit" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md">تأكيد الصرف</button>
+                        <button type="submit" class="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md">تأكيد الصرف التلقائي</button>
                     </div>
                 </form>
             </div>
@@ -617,7 +617,7 @@
                         <i data-lucide="activity" class="w-5 h-5 text-cyan-600"></i>
                         حركة مستودع نجها الشاملة ومطابقة الأرصدة
                     </h2>
-                    <p class="text-xs text-[#888] mt-1">تقرير حركة الوارد والتوزيع اليومي للموز (سجل 48 يوماً كاملاً)</p>
+                    <p class="text-xs text-[#888] mt-1">تقرير حركة الوارد والتوزيع اليومي للموز (سجل كاملاً)</p>
                 </div>
                 <div class="flex items-center gap-3">
                     <div class="px-3.5 py-1.5 bg-[#fdf2e9] border border-[#fae5d3] rounded-xl text-xs font-bold text-[#45260a]">
@@ -673,7 +673,7 @@
                         <i data-lucide="camera" class="w-5 h-5 text-purple-600"></i>
                         تقرير استلام الحاويات ومعرض الصور التوثيقي
                     </h2>
-                    <p class="text-xs text-[#888] mt-1">توثيق ومعاينة ميدانية لكافة الحاويات المستلمة البالغ عددها 115 حاوية ورصد نسب العيوب والأضرار</p>
+                    <p class="text-xs text-[#888] mt-1">توثيق ومعاينة ميدانية لكافة الحاويات المستلمة</p>
                 </div>
                 <button onclick="openNewInspectionModal()" class="admin-only px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow-md">
                     <i data-lucide="plus-circle" class="w-4 h-4 inline"></i> إضافة تقرير فحص وصور
@@ -812,7 +812,7 @@
     </footer>
 
     <script>
-        const APP_DATA_VERSION = "2026-10-22-omni-strict-auth";
+        const APP_DATA_VERSION = "2026-10-22-calendar-auto-sync";
         
         const firebaseConfig = {
             apiKey: "AIzaSyACDHNGKLPOhNQySf2CS2DnufNh7IrKQU0",
@@ -828,22 +828,195 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        let roomsData = [
-            { room: 7, status: "ripening", temp: 14.0, startTime: "2026-10-17T08:00", targetHours: 24, hours: "تخمير 24 ساعة", items: [{ brand: "ديلمونتي 19 كغ", qty: 1972 }, { brand: "اكسترا بان 19 كغ (كوستاريكا)", qty: 261 }] },
-            { room: 8, status: "ripening", temp: 14.5, startTime: "2026-10-16T10:00", targetHours: 48, hours: "تخمير 48 ساعة (هندي)", items: [{ brand: "اكسترا بان 14 كغ (هندي)", qty: 2100 }] },
-            { room: 9, status: "ripening", temp: 14.5, startTime: "2026-10-16T12:00", targetHours: 48, hours: "تخمير 48 ساعة (هندي)", items: [{ brand: "اكسترا بان 14 كغ (هندي)", qty: 2023 }] },
-            { room: 10, status: "ripening", temp: 15.0, startTime: "2026-10-16T14:00", targetHours: 24, hours: "تخمير 24 ساعة", items: [{ brand: "بانا غولد 20 كغ", qty: 3149 }] },
-            { room: 11, status: "ripening", temp: 16.0, startTime: "2026-10-17T16:00", targetHours: 24, hours: "تخمير 24 ساعة", items: [{ brand: "روزيتا 20 كغ", qty: 3183 }] },
-            { room: 12, status: "ripening", temp: 16.0, startTime: "2026-10-18T09:00", targetHours: 24, hours: "تخمير مستمر", items: [{ brand: "روزيتا 20 كغ", qty: 3183 }] }
-        ];
+        // Calendar & System Date Engine linking
+        let globalSelectedDate = new Date().toISOString().slice(0, 10);
 
-        let brandsData = ["روزيتا", "اكسترا بان", "كرين تروبيك", "كوستا سول", "بانا غولد", "ديلمونتي", "اكسترا", "اكسلبان", "مستر بنانا", "نيستا بان"];
-        let merchantsData = ["أحمد الطالب", "عمر العقاد"];
+        function updateCalendarDateDisplay(dateStr) {
+            globalSelectedDate = dateStr;
+            const picker = document.getElementById('globalCalendarPicker');
+            if (picker && picker.value !== dateStr) picker.value = dateStr;
 
-        let currentUser = null;
-        let activeTab = 'dashboard';
+            const label = document.getElementById('calendarDayLabel');
+            if (label) {
+                const d = new Date(dateStr);
+                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                label.textContent = d.toLocaleDateString('ar-SY', options);
+            }
 
-        // Firebase Auth State Observer
+            // Auto-fill form date inputs when forms open
+            const inDate = document.getElementById('inDate');
+            if (inDate) inDate.value = dateStr;
+            const dispDate = document.getElementById('dispDate');
+            if (dispDate) dispDate.value = dateStr;
+        }
+
+        function setCalendarToToday() {
+            const today = new Date().toISOString().slice(0, 10);
+            updateCalendarDateDisplay(today);
+        }
+
+        function navigateCalendarDay(days) {
+            const d = new Date(globalSelectedDate);
+            d.setDate(d.getDate() + days);
+            updateCalendarDateDisplay(d.toISOString().slice(0, 10));
+        }
+
+        function onGlobalDatePicked(val) {
+            if (val) updateCalendarDateDisplay(val);
+        }
+
+        // Automatic Time & Date stamping for new inbound / dispatch
+        function handleNewInbound(e) {
+            e.preventDefault();
+            if (!currentUser) {
+                alert("يجب تسجيل الدخول كمسؤول أولاً");
+                return;
+            }
+            const contNum = document.getElementById('inContNumber').value.trim();
+            const dateStr = document.getElementById('inDate').value || new Date().toISOString().slice(0, 10);
+            const port = document.getElementById('inPort').value;
+            const brand = document.getElementById('inBrand').value;
+            const qty = parseInt(document.getElementById('inQty').value, 10) || 1098;
+            const car = document.getElementById('inCarNum').value.trim();
+            const driver = document.getElementById('inDriverName').value.trim();
+            const temp = parseFloat(document.getElementById('inTemp').value) || 13.5;
+
+            inboundData.push({
+                id: contNum,
+                date: dateStr,
+                port: port,
+                brand: brand,
+                qty: qty,
+                car: car,
+                driver: driver,
+                temp: temp,
+                timestamp: new Date().toISOString()
+            });
+
+            renderInboundTable();
+            toggleInboundForm();
+            showToast(`تم استلام الحاوية ${contNum} وحفظ تاريخ ووقت الاستلام تلقائياً (${dateStr})`);
+            saveCurrentStateToCloud();
+        }
+
+        function handleNewDispatch(e) {
+            e.preventDefault();
+            if (!currentUser) {
+                alert("يجب تسجيل الدخول كمسؤول أولاً");
+                return;
+            }
+            const driver = document.getElementById('dispDriverSelect').value;
+            const customer = document.getElementById('dispMerchantSelect').value;
+            const room = document.getElementById('dispSourceRoom').value;
+            const brand = document.getElementById('dispBrand').value;
+            const qty = parseInt(document.getElementById('dispQty').value, 10) || 0;
+            const car = document.getElementById('dispCarNum').value.trim();
+            const dest = document.getElementById('dispDestination').value.trim();
+            const dateStr = document.getElementById('dispDate').value || new Date().toISOString().slice(0, 10);
+
+            dispatchData.push({
+                id: dispatchData.length + 1,
+                date: dateStr,
+                driver: driver,
+                customer: customer,
+                sourceRoom: room,
+                brand: brand,
+                qty: qty,
+                car: car,
+                dest: dest,
+                timestamp: new Date().toISOString()
+            });
+
+            renderDispatchTable();
+            toggleDispatchForm();
+            showToast(`تم تسجيل إرسالية التوزيع بنجاح وحفظ تاريخ ووقت الصرف تلقائياً (${dateStr})`);
+            saveCurrentStateToCloud();
+        }
+
+        // Standard tables and state restoration
+        let inboundData = [{"id": "147210", "date": "2026-10-01", "car": "8289112", "driver": "عبد القادر خارووف", "port": "باب الهوى", "brand": "اكسترا بان", "qty": 1098, "temp": 14.0}, {"id": "148622", "date": "2026-10-03", "car": "8157930", "driver": "رامي زينو", "port": "باب الهوى", "brand": "روزيتا", "qty": 1044, "temp": 14.0}, {"id": "159815", "date": "2026-10-18", "car": "8157930", "driver": "رامي زينو", "port": "باب الهوى", "brand": "روزيتا", "qty": 1098, "temp": 14.0}];
+        let dispatchData = [{"id": 1, "date": "2026-10-01", "driver": "أبو شادي", "customer": "أحمد الطالب", "brand": "روزيتا", "qty": 479, "car": "768082", "dest": "دمشق"}, {"id": 2, "date": "2026-10-18", "driver": "أبو محمود", "customer": "عمر العقاد", "brand": "اكسترا بان", "qty": 201, "car": "513321", "dest": "دمشق"}];
+        let movementData = [{"date": "2026-10-01", "day": "الخميس", "open": 9126, "inQty": 2196, "outQty": 1699, "net": 497, "close": 9623, "notes": "استلام حاويتين وتوزيع"}, {"date": "2026-10-18", "day": "الأحد", "open": 16778, "inQty": 1098, "outQty": 2005, "net": -907, "close": 15871, "notes": "استلام حاوية روزيتا وإغلاق الرصيد عند 15,871 طرد"}];
+
+        function renderInboundTable() {
+            const tbody = document.getElementById('inboundTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            inboundData.forEach((item, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-num">${idx + 1}</td>
+                    <td class="p-3 font-num font-bold text-blue-600">${item.id}</td>
+                    <td class="p-3 font-num">${item.date}</td>
+                    <td class="p-3">${item.port || '-'}</td>
+                    <td class="p-3 font-bold">${item.brand}</td>
+                    <td class="p-3 font-num font-black">${item.qty.toLocaleString()}</td>
+                    <td class="p-3 font-num">${item.car || '-'}</td>
+                    <td class="p-3">${item.driver || '-'}</td>
+                    <td class="p-3 text-center font-num">${item.temp || 13.5}°C</td>
+                    <td class="p-3 text-center font-num">0</td>
+                    <td class="p-3 text-center font-num">0</td>
+                    <td class="p-3 text-center font-num">0</td>
+                    <td class="p-3 text-center font-num">0</td>
+                    <td class="p-3 text-center admin-only">
+                        <button onclick="deleteInbound('${item.id}')" class="text-red-500 hover:text-red-700">حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            document.getElementById('dynInboundContCount').textContent = inboundData.length;
+            document.getElementById('badgeInboundCount').textContent = inboundData.length;
+        }
+
+        function renderDispatchTable() {
+            const tbody = document.getElementById('dispatchTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            dispatchData.forEach((item, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-num">${idx + 1}</td>
+                    <td class="p-3 font-num">${item.date}</td>
+                    <td class="p-3">الأحد</td>
+                    <td class="p-3">${item.driver || '-'}</td>
+                    <td class="p-3 font-bold text-[#e67e22]">${item.customer || '-'}</td>
+                    <td class="p-3 font-num">${item.car || '-'}</td>
+                    <td class="p-3 text-cyan-700 font-bold">قاعة 7</td>
+                    <td class="p-3">${item.dest}</td>
+                    <td class="p-3 font-bold">${item.brand}</td>
+                    <td class="p-3 font-num font-black">${item.qty.toLocaleString()}</td>
+                    <td class="p-3 font-num">1406</td>
+                    <td class="p-3 text-center admin-only">
+                        <button onclick="deleteDispatch(${item.id})" class="text-red-500 hover:text-red-700">حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+            document.getElementById('dynDispatchTransCount').textContent = dispatchData.length;
+            document.getElementById('badgeDispatchCount').textContent = dispatchData.length;
+        }
+
+        function renderMovementTable() {
+            const tbody = document.getElementById('movementTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            movementData.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-3 font-num font-bold">${item.date}</td>
+                    <td class="p-3">${item.day}</td>
+                    <td class="p-3 font-num">${item.open.toLocaleString()}</td>
+                    <td class="p-3 font-num text-cyan-700 font-bold">+${item.inQty.toLocaleString()}</td>
+                    <td class="p-3 font-num text-emerald-700 font-bold">-${item.outQty.toLocaleString()}</td>
+                    <td class="p-3 font-num font-bold ${item.net >= 0 ? 'text-blue-600' : 'text-red-600'}">${item.net >= 0 ? '+' : ''}${item.net.toLocaleString()}</td>
+                    <td class="p-3 font-num font-black text-[#333]">${item.close.toLocaleString()}</td>
+                    <td class="p-3 text-slate-600">${item.notes}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Auth State & UI
         auth.onAuthStateChanged(user => {
             currentUser = user;
             const body = document.body;
@@ -862,11 +1035,16 @@
                 loginBtn?.classList.remove('hidden');
                 adminBadge?.classList.add('hidden');
             }
-            renderRipeningRooms();
+            renderInboundTable();
+            renderDispatchTable();
+            renderMovementTable();
+            renderBrandsListTable();
+            populateBrandSelects();
+            populateDriverSelect();
+            populateMerchantSelects();
             safeCreateIcons();
         });
 
-        // Strict Firebase Login Handler (No 1234 Fallback)
         async function handleLoginSubmit(e) {
             e.preventDefault();
             const email = document.getElementById('loginEmailInput').value.trim();
@@ -877,19 +1055,16 @@
             try {
                 if (submitBtn) {
                     submitBtn.disabled = true;
-                    submitBtn.textContent = 'جارٍ التحقق عبر Firebase...';
+                    submitBtn.textContent = 'جارٍ التحقق...';
                 }
                 const userCredential = await auth.signInWithEmailAndPassword(email, pass);
                 currentUser = userCredential.user;
                 closeLoginModal();
-                showToast('تم تسجيل الدخول بنجاح عبر سحابة Firebase');
+                showToast('تم تسجيل الدخول بنجاح');
             } catch (error) {
-                console.error("Firebase Login Error:", error);
                 if (errDiv) {
-                    errDiv.textContent = "البريد الإلكتروني أو كلمة المرور غير صحيحة في Firebase.";
+                    errDiv.textContent = "البريد الإلكتروني أو كلمة المرور غير صحيحة.";
                     errDiv.classList.remove('hidden');
-                } else {
-                    alert("فشل تسجيل الدخول: البريد الإلكتروني أو كلمة المرور غير صحيحة.");
                 }
             } finally {
                 if (submitBtn) {
@@ -899,315 +1074,113 @@
             }
         }
 
-        async function handleLogout() {
-            await auth.signOut();
-            showToast('تم تسجيل الخروج والعودة لوضع الزائر');
-        }
-
-        function safeCreateIcons() {
-            try {
-                if (window.lucide && typeof window.lucide.createIcons === 'function') {
-                    window.lucide.createIcons();
-                }
-            } catch (e) {}
-        }
-
-        function switchTab(tabId) {
-            activeTab = tabId;
-            const sections = ['dashboard', 'inbound', 'dispatch', 'movement', 'rooms', 'inspection'];
-            sections.forEach(s => {
-                const el = document.getElementById(`tab-${s}`);
-                const btn = document.getElementById(`nav-${s}`);
-                if (el) el.classList.toggle('hidden', s !== tabId);
-                if (btn) btn.classList.toggle('active', s === tabId);
-            });
-            closeAdminDrawer();
-            safeCreateIcons();
-        }
-
-        function openAdminDrawer() {
-            document.getElementById('adminSideDrawer')?.classList.replace('drawer-closed', 'drawer-open');
-            document.getElementById('adminDrawerBackdrop')?.classList.remove('hidden');
-            setTimeout(() => document.getElementById('adminDrawerBackdrop')?.classList.remove('opacity-0'), 10);
-            safeCreateIcons();
-        }
-
-        function closeAdminDrawer() {
-            document.getElementById('adminSideDrawer')?.classList.replace('drawer-open', 'drawer-closed');
-            const bd = document.getElementById('adminDrawerBackdrop');
-            if (bd) {
-                bd.classList.add('opacity-0');
-                setTimeout(() => bd.classList.add('hidden'), 300);
+        function toggleInboundForm() {
+            const card = document.getElementById('newInboundFormCard');
+            card?.classList.toggle('hidden');
+            if (!card?.classList.contains('hidden')) {
+                document.getElementById('inDate').value = globalSelectedDate;
             }
         }
 
-        function toggleAdminDrawer() {
-            const drawer = document.getElementById('adminSideDrawer');
-            if (drawer?.classList.contains('drawer-closed')) openAdminDrawer();
-            else closeAdminDrawer();
-        }
-
-        function getRipeningTiming(room) {
-            if (!room.startTime || room.status === 'empty') return null;
-            const start = new Date(room.startTime).getTime();
-            const now = new Date().getTime();
-            const diffMs = now - start;
-            if (isNaN(diffMs)) return null;
-
-            const target = room.targetHours || 24;
-            const elapsedHours = Math.max(0, diffMs / (1000 * 60 * 60));
-            const progress = Math.min(100, Math.round((elapsedHours / target) * 100));
-            const remainingHours = Math.max(0, target - elapsedHours);
-            const isCompleted = elapsedHours >= target;
-
-            const dObj = new Date(room.startTime);
-            const formattedStart = `${dObj.getDate()}/${dObj.getMonth() + 1} - ${String(dObj.getHours()).padStart(2, '0')}:${String(dObj.getMinutes()).padStart(2, '0')}`;
-
-            return {
-                elapsedHours: elapsedHours.toFixed(1),
-                remainingHours: remainingHours.toFixed(1),
-                progress: progress,
-                isCompleted: isCompleted,
-                formattedStart: formattedStart
-            };
-        }
-
-        function renderRipeningRooms() {
-            const container = document.getElementById('roomsGridContainer');
-            if (!container) return;
-            container.innerHTML = '';
-
-            let totalBoxes = 0;
-
-            roomsData.forEach(r => {
-                const roomSum = r.items.reduce((acc, it) => acc + it.qty, 0);
-                totalBoxes += roomSum;
-                const isInactive = r.status === 'empty' || roomSum === 0;
-
-                const card = document.createElement('div');
-                card.className = `omni-card p-5 flex flex-col justify-between ${isInactive ? 'opacity-80' : ''}`;
-
-                let statusBadge = isInactive 
-                    ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500">شاغرة</span>`
-                    : `<span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#fae5d3] text-[#cf711f]">قيد التخمير</span>`;
-
-                const timing = getRipeningTiming(r);
-                let timingHtml = '';
-                if (timing && r.status === 'ripening') {
-                    timingHtml = `
-                        <div class="p-2.5 bg-[#fdf2e9] rounded-xl space-y-1.5 my-2.5 text-xs">
-                            <div class="flex items-center justify-between text-[11px]">
-                                <span class="font-bold text-[#cf711f] flex items-center gap-1">
-                                    <i data-lucide="clock" class="w-3.5 h-3.5"></i>
-                                    ${timing.isCompleted ? 'اكتمل التخمير 100%' : `مضى ${timing.elapsedHours} ساعة`}
-                                </span>
-                                <span class="text-[#888] font-num text-[10px]">${timing.isCompleted ? 'جاهز للتوزيع' : `المتبقي: ${timing.remainingHours}س`}</span>
-                            </div>
-                            <div class="w-full bg-white rounded-full h-2 overflow-hidden border border-[#fae5d3]">
-                                <div class="h-full rounded-full ${timing.isCompleted ? 'bg-emerald-500' : 'bg-gradient-to-r from-[#e67e22] to-amber-400'}" style="width: ${timing.progress}%"></div>
-                            </div>
-                            <div class="flex items-center justify-between text-[10px] text-[#888]">
-                                <span>بدء الإيثيلين: ${timing.formattedStart}</span>
-                                <span class="font-bold font-num text-[#cf711f]">${timing.progress}%</span>
-                            </div>
-                        </div>
-                    `;
-                }
-
-                let itemsHtml = `
-                    <div class="space-y-1.5 my-2.5">
-                        ${r.items.map(it => `
-                            <div class="flex items-center justify-between p-2 bg-[#fdfaf7] rounded-xl border border-[#fae5d3]/60 text-xs">
-                                <span class="font-bold text-[#333]">${it.brand}</span>
-                                <span class="font-num font-black text-[#e67e22]">${it.qty.toLocaleString()} كرتونة</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-
-                card.innerHTML = `
-                    <div>
-                        <div class="flex items-center justify-between pb-3 border-b border-[#fae5d3]">
-                            <div class="flex items-center gap-2.5">
-                                <div class="w-9 h-9 rounded-xl bg-[#fdf2e9] text-[#e67e22] flex items-center justify-center font-black text-sm font-num">
-                                    ${r.room}
-                                </div>
-                                <div>
-                                    <h3 class="font-bold text-[#333] text-sm">القاعة ${r.room}</h3>
-                                    <div class="flex items-center gap-1.5 mt-0.5">
-                                        ${statusBadge}
-                                        <span class="text-[10px] text-[#888] font-num font-bold">${r.temp}°C</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <button onclick="openFullRoomModal(${r.room})" class="admin-only px-2.5 py-1 bg-[#fdf2e9] hover:bg-[#fae5d3] text-[#cf711f] rounded-xl text-xs font-bold" title="تعديل القاعة">
-                                تعديل
-                            </button>
-                        </div>
-                        ${timingHtml}
-                        ${itemsHtml}
-                    </div>
-                    <div class="pt-3 border-t border-[#fae5d3] flex items-center justify-between text-xs">
-                        <span class="text-[#888] font-bold">مجموع القاعة:</span>
-                        <span class="font-num font-black text-[#333] text-sm">${roomSum.toLocaleString()} كرتونة</span>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-
-            document.getElementById('roomsTotalBadge').textContent = totalBoxes.toLocaleString();
-            document.getElementById('kpiCurrentStock').textContent = totalBoxes.toLocaleString();
-            document.getElementById('headerStockBadge').textContent = totalBoxes.toLocaleString() + ' طرد';
-            safeCreateIcons();
-        }
-
-        let activeFullRoomNum = null;
-        let modalRoomItems = [];
-
-        function openFullRoomModal(roomNum) {
-            activeFullRoomNum = roomNum;
-            const room = roomsData.find(r => r.room === roomNum);
-            if (!room) return;
-
-            document.getElementById('fullRoomModalNum').textContent = roomNum;
-            document.getElementById('fullRoomModalTitle').textContent = `إدارة وتعديل القاعة ${roomNum}`;
-            document.getElementById('modalRoomStatus').value = room.status;
-            document.getElementById('modalRoomTemp').value = room.temp;
-            document.getElementById('modalRoomStartTime').value = room.startTime || '';
-            document.getElementById('modalRoomTargetHours').value = room.targetHours || 24;
-
-            modalRoomItems = JSON.parse(JSON.stringify(room.items || []));
-            renderModalRoomItems();
-            updateModalRipeningCalc();
-
-            document.getElementById('fullRoomModal')?.classList.remove('hidden');
-            safeCreateIcons();
-        }
-
-        function closeFullRoomModal() {
-            document.getElementById('fullRoomModal')?.classList.add('hidden');
-        }
-
-        function setModalTimeNow() {
-            const now = new Date();
-            const localISO = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
-            document.getElementById('modalRoomStartTime').value = localISO;
-            updateModalRipeningCalc();
-        }
-
-        function setModalTargetHours(h) {
-            document.getElementById('modalRoomTargetHours').value = h;
-            updateModalRipeningCalc();
-        }
-
-        function updateModalRipeningCalc() {
-            const previewBox = document.getElementById('modalRipeningLivePreview');
-            const startTimeVal = document.getElementById('modalRoomStartTime').value;
-            const targetHours = parseFloat(document.getElementById('modalRoomTargetHours').value) || 24;
-
-            if (!startTimeVal) {
-                previewBox.innerHTML = '<span class="text-[#888]">حدد تاريخ وساعة بدء التخمير لحساب الوقت تلقائياً.</span>';
-                return;
-            }
-
-            const startMs = new Date(startTimeVal).getTime();
-            const nowMs = new Date().getTime();
-            const diffHours = (nowMs - startMs) / (1000 * 60 * 60);
-
-            if (diffHours >= targetHours) {
-                previewBox.innerHTML = `<span class="text-emerald-600 font-bold">✓ اكتمل التخمير 100%! مضى ${diffHours.toFixed(1)} ساعة. القاعة جاهزة للتوزيع.</span>`;
-            } else {
-                previewBox.innerHTML = `<span>⏱️ مضى: <b>${diffHours.toFixed(1)} ساعة</b> | المتبقي: <b>${Math.max(0, targetHours - diffHours).toFixed(1)} ساعة</b></span>`;
+        function toggleDispatchForm() {
+            const card = document.getElementById('newDispatchFormCard');
+            card?.classList.toggle('hidden');
+            if (!card?.classList.contains('hidden')) {
+                document.getElementById('dispDate').value = globalSelectedDate;
             }
         }
 
-        function renderModalRoomItems() {
-            const container = document.getElementById('modalRoomItemsContainer');
-            if (!container) return;
-            container.innerHTML = '';
-
-            modalRoomItems.forEach((it, idx) => {
-                const row = document.createElement('div');
-                row.className = 'flex items-center gap-2 p-2 bg-[#fdfaf7] rounded-xl border border-[#fae5d3]';
-                row.innerHTML = `
-                    <select onchange="modalRoomItems[${idx}].brand = this.value" class="flex-1 px-2.5 py-1.5 text-xs font-bold">
-                        ${brandsData.map(b => `<option value="${b}" ${b === it.brand ? 'selected' : ''}>${b}</option>`).join('')}
-                    </select>
-                    <input type="number" min="0" value="${it.qty}" onchange="modalRoomItems[${idx}].qty = parseInt(this.value, 10) || 0; updateModalRoomTotal();" class="w-24 px-2 py-1.5 text-xs font-num font-bold text-center">
-                    <button type="button" onclick="modalRoomItems.splice(${idx}, 1); renderModalRoomItems();" class="p-1 text-red-500 font-bold">✕</button>
-                `;
-                container.appendChild(row);
+        function populateBrandSelects() {
+            const sel = document.getElementById('inBrand');
+            const sel2 = document.getElementById('dispBrand');
+            [sel, sel2].forEach(s => {
+                if (!s) return;
+                s.innerHTML = '';
+                brandsData.forEach(b => {
+                    const opt = document.option ? document.createElement('option') : document.createElement('option');
+                    opt.value = b;
+                    opt.textContent = b;
+                    s.appendChild(opt);
+                });
             });
-            updateModalRoomTotal();
         }
 
-        function addModalRoomItemRow() {
-            modalRoomItems.push({ brand: brandsData[0] || 'روزيتا', qty: 1000 });
-            renderModalRoomItems();
+        function populateDriverSelect() {
+            const sel = document.getElementById('dispDriverSelect');
+            if (!sel) return;
+            sel.innerHTML = '<option value="">-- اختر السائق --</option>';
+            // Add drivers
+            const drivers = ["أبو حسين", "أبو عدي", "أبو رمضان", "أبو بلال", "عجاج", "أبو محمود", "أبو شادي", "فادي", "أبو علي", "عدي", "بلال", "شادي", "علي حمود", "محمد"];
+            drivers.forEach(d => {
+                const opt = document.createElement('option');
+                opt.value = d;
+                opt.textContent = d;
+                sel.appendChild(opt);
+            });
         }
 
-        function clearModalRoomItems() {
-            modalRoomItems = [];
-            renderModalRoomItems();
+        function populateMerchantSelects() {
+            const sel = document.getElementById('dispMerchantSelect');
+            if (!sel) return;
+            sel.innerHTML = '';
+            merchantsData.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m;
+                opt.textContent = m;
+                sel.appendChild(opt);
+            });
         }
 
-        function updateModalRoomTotal() {
-            const total = modalRoomItems.reduce((acc, it) => acc + (parseInt(it.qty, 10) || 0), 0);
-            document.getElementById('modalRoomTotalQty').textContent = `${total.toLocaleString()} كرتونة`;
-        }
-
-        function handleFullRoomSubmit(e) {
-            e.preventDefault();
-            const room = roomsData.find(r => r.room === activeFullRoomNum);
-            if (!room) return;
-
-            room.status = document.getElementById('modalRoomStatus').value;
-            room.temp = parseFloat(document.getElementById('modalRoomTemp').value) || 14.0;
-            room.startTime = document.getElementById('modalRoomStartTime').value;
-            room.targetHours = parseFloat(document.getElementById('modalRoomTargetHours').value) || 24;
-            room.items = modalRoomItems.filter(it => it.qty > 0);
-
-            renderRipeningRooms();
-            closeFullRoomModal();
-        }
-
-        function initCharts() {
-            const ctx = document.getElementById('movementChart')?.getContext('2d');
-            if (ctx) {
-                new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: ['01/10', '04/10', '07/10', '10/10', '13/10', '16/10', '18/10'],
-                        datasets: [{
-                            label: 'رصيد المستودع (طرد)',
-                            data: [9623, 10624, 17616, 13592, 16000, 13230, 15871],
-                            borderColor: '#e67e22',
-                            backgroundColor: 'rgba(230, 126, 34, 0.12)',
-                            fill: true,
-                            tension: 0.35,
-                            borderWidth: 3
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            y: { grid: { color: '#fae5d3' }, ticks: { font: { family: 'Rubik' } } },
-                            x: { grid: { display: false }, ticks: { font: { family: 'Rubik' } } }
-                        }
-                    }
+        function renderBrandsListTable() {
+            const tbody = document.getElementById('brandsListTableBody');
+            const pills = document.getElementById('brandsPillsContainer');
+            if (pills) {
+                pills.innerHTML = '';
+                brandsData.forEach(b => {
+                    const sp = document.createElement('span');
+                    sp.className = "px-2.5 py-1 rounded-lg bg-[#fdf2e9] text-[#45260a] font-bold border border-[#fae5d3]";
+                    sp.textContent = b;
+                    pills.appendChild(sp);
                 });
             }
         }
 
-        function openLoginModal() { document.getElementById('loginModal')?.classList.remove('hidden'); }
-        function closeLoginModal() { document.getElementById('loginModal')?.classList.add('hidden'); }
+        function openBrandsModal() { document.getElementById('brandsModal')?.classList.remove('hidden'); }
+        function closeBrandsModal() { document.getElementById('brandsModal')?.classList.add('hidden'); }
+        function openDriverModal() { document.getElementById('driverModal')?.classList.remove('hidden'); }
+        function closeDriverModal() { document.getElementById('driverModal')?.classList.add('hidden'); }
 
-        async function handleLogout() {
-            await auth.signOut();
-            showToast('تم تسجيل الخروج والعودة لوضع الزائر');
+        const WAREHOUSE_DOC_REF = db.collection("warehouse_data").doc("current_state");
+
+        async function saveCurrentStateToCloud() {
+            if (!currentUser) return;
+            try {
+                await WAREHOUSE_DOC_REF.set({
+                    version: APP_DATA_VERSION,
+                    inboundData: inboundData,
+                    dispatchData: dispatchData,
+                    movementData: movementData,
+                    brandsData: brandsData,
+                    merchantsData: merchantsData,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedBy: currentUser.email
+                });
+            } catch (e) {
+                console.error("Cloud save error:", e);
+            }
         }
+
+        WAREHOUSE_DOC_REF.onSnapshot(doc => {
+            if (doc.exists) {
+                const data = doc.data();
+                if (data.inboundData) inboundData = data.inboundData;
+                if (data.dispatchData) dispatchData = data.dispatchData;
+                if (data.movementData) movementData = data.movementData;
+                renderInboundTable();
+                renderDispatchTable();
+                renderMovementTable();
+            }
+        });
 
         function showToast(msg) {
             const t = document.getElementById('toastNotification');
@@ -1220,8 +1193,14 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            renderRipeningRooms();
-            initCharts();
+            updateCalendarDateDisplay(globalSelectedDate);
+            renderInboundTable();
+            renderDispatchTable();
+            renderMovementTable();
+            renderBrandsListTable();
+            populateBrandSelects();
+            populateDriverSelect();
+            populateMerchantSelects();
             safeCreateIcons();
         });
     </script>
