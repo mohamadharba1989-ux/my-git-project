@@ -671,7 +671,7 @@
                 <div>
                     <h2 class="text-lg font-bold text-[#333] flex items-center gap-2">
                         <i data-lucide="camera" class="w-5 h-5 text-purple-600"></i>
-                        تقرير استلام الحاويات ومعرض الصور التوثيقي
+                        تقرير استلاستلام الحاويات ومعرض الصور التوثيقي
                     </h2>
                     <p class="text-xs text-[#888] mt-1">توثيق ومعاينة ميدانية لكافة الحاويات المستلمة</p>
                 </div>
@@ -779,7 +779,7 @@
         </div>
     </div>
 
-    <!-- Login Modal (Strict Firebase Auth) -->
+    <!-- Login Modal -->
     <div id="loginModal" class="hidden fixed inset-0 z-50 bg-[#45260a]/60 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-[#fae5d3] space-y-4">
             <div class="flex items-center justify-between border-b border-[#fae5d3] pb-3">
@@ -812,7 +812,7 @@
     </footer>
 
     <script>
-        const APP_DATA_VERSION = "2026-10-22-calendar-auto-sync";
+        const APP_DATA_VERSION = "2026-10-22-calendar-auto-sync-v2";
         
         const firebaseConfig = {
             apiKey: "AIzaSyACDHNGKLPOhNQySf2CS2DnufNh7IrKQU0",
@@ -828,7 +828,6 @@
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Calendar & System Date Engine linking
         let globalSelectedDate = new Date().toISOString().slice(0, 10);
 
         function updateCalendarDateDisplay(dateStr) {
@@ -843,7 +842,6 @@
                 label.textContent = d.toLocaleDateString('ar-SY', options);
             }
 
-            // Auto-fill form date inputs when forms open
             const inDate = document.getElementById('inDate');
             if (inDate) inDate.value = dateStr;
             const dispDate = document.getElementById('dispDate');
@@ -865,15 +863,15 @@
             if (val) updateCalendarDateDisplay(val);
         }
 
-        // Automatic Time & Date stamping for new inbound / dispatch
+        let inboundData = [{"id": "147210", "date": "2026-10-01", "car": "8289112", "driver": "عبد القادر خارووف", "port": "باب الهوى", "brand": "اكسترا بان", "qty": 1098, "temp": 14.0}, {"id": "148622", "date": "2026-10-03", "car": "8157930", "driver": "رامي زينو", "port": "باب الهوى", "brand": "روزيتا", "qty": 1044, "temp": 14.0}, {"id": "159815", "date": "2026-10-18", "car": "8157930", "driver": "رامي زينو", "port": "باب الهوى", "brand": "روزيتا", "qty": 1098, "temp": 14.0}];
+        let dispatchData = [{"id": 1, "date": "2026-10-01", "driver": "أبو شادي", "customer": "أحمد الطالب", "brand": "روزيتا", "qty": 479, "car": "768082", "dest": "دمشق"}, {"id": 2, "date": "2026-10-18", "driver": "أبو محمود", "customer": "عمر العقاد", "brand": "اكسترا بان", "qty": 201, "car": "513321", "dest": "دمشق"}];
+        let movementData = [{"date": "2026-10-01", "day": "الخميس", "open": 9126, "inQty": 2196, "outQty": 1699, "net": 497, "close": 9623, "notes": "استلام وتوزيع"}, {"date": "2026-10-18", "day": "الأحد", "open": 16778, "inQty": 1098, "outQty": 2005, "net": -907, "close": 15871, "notes": "استلام وتوزيع"}];
+
         function handleNewInbound(e) {
             e.preventDefault();
-            if (!currentUser) {
-                alert("يجب تسجيل الدخول كمسؤول أولاً");
-                return;
-            }
+            if (!currentUser) { alert("يجب تسجيل الدخول كمسؤول أولاً"); return; }
             const contNum = document.getElementById('inContNumber').value.trim();
-            const dateStr = document.getElementById('inDate').value || new Date().toISOString().slice(0, 10);
+            const dateStr = document.getElementById('inDate').value || globalSelectedDate;
             const port = document.getElementById('inPort').value;
             const brand = document.getElementById('inBrand').value;
             const qty = parseInt(document.getElementById('inQty').value, 10) || 1098;
@@ -881,7 +879,7 @@
             const driver = document.getElementById('inDriverName').value.trim();
             const temp = parseFloat(document.getElementById('inTemp').value) || 13.5;
 
-            inboundData.push({
+            inboundData.unshift({
                 id: contNum,
                 date: dateStr,
                 port: port,
@@ -889,33 +887,29 @@
                 qty: qty,
                 car: car,
                 driver: driver,
-                temp: temp,
-                timestamp: new Date().toISOString()
+                temp: temp
             });
 
             renderInboundTable();
             toggleInboundForm();
-            showToast(`تم استلام الحاوية ${contNum} وحفظ تاريخ ووقت الاستلام تلقائياً (${dateStr})`);
+            showToast(`تم استلام الحاوية ${contNum} وتوثيق تاريخها تلقائياً (${dateStr})`);
             saveCurrentStateToCloud();
         }
 
         function handleNewDispatch(e) {
             e.preventDefault();
-            if (!currentUser) {
-                alert("يجب تسجيل الدخول كمسؤول أولاً");
-                return;
-            }
-            const driver = document.getElementById('dispDriverSelect').value;
-            const customer = document.getElementById('dispMerchantSelect').value;
-            const room = document.getElementById('dispSourceRoom').value;
-            const brand = document.getElementById('dispBrand').value;
-            const qty = parseInt(document.getElementById('dispQty').value, 10) || 0;
-            const car = document.getElementById('dispCarNum').value.trim();
-            const dest = document.getElementById('dispDestination').value.trim();
-            const dateStr = document.getElementById('dispDate').value || new Date().toISOString().slice(0, 10);
+            if (!currentUser) { alert("يجب تسجيل الدخول كمسؤول أولاً"); return; }
+            const driver = document.getElementById('dispDriverSelect').value || 'سائق معتمد';
+            const customer = document.getElementById('dispMerchantSelect').value || 'أحمد الطالب';
+            const room = document.getElementById('dispSourceRoom').value || '7';
+            const brand = document.getElementById('dispBrand').value || 'روزيتا';
+            const qty = parseInt(document.getElementById('dispQty').value, 10) || 100;
+            const car = document.getElementById('dispCarNum').value.trim() || '624756';
+            const dest = document.getElementById('dispDestination').value.trim() || 'دمشق';
+            const dateStr = document.getElementById('dispDate').value || globalSelectedDate;
 
-            dispatchData.push({
-                id: dispatchData.length + 1,
+            dispatchData.unshift({
+                id: Date.now(),
                 date: dateStr,
                 driver: driver,
                 customer: customer,
@@ -923,20 +917,14 @@
                 brand: brand,
                 qty: qty,
                 car: car,
-                dest: dest,
-                timestamp: new Date().toISOString()
+                dest: dest
             });
 
             renderDispatchTable();
             toggleDispatchForm();
-            showToast(`تم تسجيل إرسالية التوزيع بنجاح وحفظ تاريخ ووقت الصرف تلقائياً (${dateStr})`);
+            showToast(`تم تسجيل الإرسالية وتوثيق تاريخ الصرف تلقائياً (${dateStr})`);
             saveCurrentStateToCloud();
         }
-
-        // Standard tables and state restoration
-        let inboundData = [{"id": "147210", "date": "2026-10-01", "car": "8289112", "driver": "عبد القادر خارووف", "port": "باب الهوى", "brand": "اكسترا بان", "qty": 1098, "temp": 14.0}, {"id": "148622", "date": "2026-10-03", "car": "8157930", "driver": "رامي زينو", "port": "باب الهوى", "brand": "روزيتا", "qty": 1044, "temp": 14.0}, {"id": "159815", "date": "2026-10-18", "car": "8157930", "driver": "رامي زينو", "port": "باب الهوى", "brand": "روزيتا", "qty": 1098, "temp": 14.0}];
-        let dispatchData = [{"id": 1, "date": "2026-10-01", "driver": "أبو شادي", "customer": "أحمد الطالب", "brand": "روزيتا", "qty": 479, "car": "768082", "dest": "دمشق"}, {"id": 2, "date": "2026-10-18", "driver": "أبو محمود", "customer": "عمر العقاد", "brand": "اكسترا بان", "qty": 201, "car": "513321", "dest": "دمشق"}];
-        let movementData = [{"date": "2026-10-01", "day": "الخميس", "open": 9126, "inQty": 2196, "outQty": 1699, "net": 497, "close": 9623, "notes": "استلام حاويتين وتوزيع"}, {"date": "2026-10-18", "day": "الأحد", "open": 16778, "inQty": 1098, "outQty": 2005, "net": -907, "close": 15871, "notes": "استلام حاوية روزيتا وإغلاق الرصيد عند 15,871 طرد"}];
 
         function renderInboundTable() {
             const tbody = document.getElementById('inboundTableBody');
@@ -950,7 +938,7 @@
                     <td class="p-3 font-num">${item.date}</td>
                     <td class="p-3">${item.port || '-'}</td>
                     <td class="p-3 font-bold">${item.brand}</td>
-                    <td class="p-3 font-num font-black">${item.qty.toLocaleString()}</td>
+                    <td class="p-3 font-num font-black">${(item.qty || 0).toLocaleString()}</td>
                     <td class="p-3 font-num">${item.car || '-'}</td>
                     <td class="p-3">${item.driver || '-'}</td>
                     <td class="p-3 text-center font-num">${item.temp || 13.5}°C</td>
@@ -977,14 +965,14 @@
                 tr.innerHTML = `
                     <td class="p-3 font-num">${idx + 1}</td>
                     <td class="p-3 font-num">${item.date}</td>
-                    <td class="p-3">الأحد</td>
+                    <td class="p-3">اليوم</td>
                     <td class="p-3">${item.driver || '-'}</td>
                     <td class="p-3 font-bold text-[#e67e22]">${item.customer || '-'}</td>
                     <td class="p-3 font-num">${item.car || '-'}</td>
-                    <td class="p-3 text-cyan-700 font-bold">قاعة 7</td>
-                    <td class="p-3">${item.dest}</td>
+                    <td class="p-3 text-cyan-700 font-bold">قاعة ${item.sourceRoom || 7}</td>
+                    <td class="p-3">${item.dest || 'دمشق'}</td>
                     <td class="p-3 font-bold">${item.brand}</td>
-                    <td class="p-3 font-num font-black">${item.qty.toLocaleString()}</td>
+                    <td class="p-3 font-num font-black">${(item.qty || 0).toLocaleString()}</td>
                     <td class="p-3 font-num">1406</td>
                     <td class="p-3 text-center admin-only">
                         <button onclick="deleteDispatch(${item.id})" class="text-red-500 hover:text-red-700">حذف</button>
@@ -1005,18 +993,17 @@
                 tr.innerHTML = `
                     <td class="p-3 font-num font-bold">${item.date}</td>
                     <td class="p-3">${item.day}</td>
-                    <td class="p-3 font-num">${item.open.toLocaleString()}</td>
-                    <td class="p-3 font-num text-cyan-700 font-bold">+${item.inQty.toLocaleString()}</td>
-                    <td class="p-3 font-num text-emerald-700 font-bold">-${item.outQty.toLocaleString()}</td>
-                    <td class="p-3 font-num font-bold ${item.net >= 0 ? 'text-blue-600' : 'text-red-600'}">${item.net >= 0 ? '+' : ''}${item.net.toLocaleString()}</td>
-                    <td class="p-3 font-num font-black text-[#333]">${item.close.toLocaleString()}</td>
+                    <td class="p-3 font-num">${(item.open || 0).toLocaleString()}</td>
+                    <td class="p-3 font-num text-cyan-700 font-bold">+${(item.inQty || 0).toLocaleString()}</td>
+                    <td class="p-3 font-num text-emerald-700 font-bold">-${(item.outQty || 0).toLocaleString()}</td>
+                    <td class="p-3 font-num font-bold ${item.net >= 0 ? 'text-blue-600' : 'text-red-600'}">${item.net >= 0 ? '+' : ''}${(item.net || 0).toLocaleString()}</td>
+                    <td class="p-3 font-num font-black text-[#333]">${(item.close || 0).toLocaleString()}</td>
                     <td class="p-3 text-slate-600">${item.notes}</td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        // Auth State & UI
         auth.onAuthStateChanged(user => {
             currentUser = user;
             const body = document.body;
@@ -1038,10 +1025,10 @@
             renderInboundTable();
             renderDispatchTable();
             renderMovementTable();
-            renderBrandsListTable();
             populateBrandSelects();
             populateDriverSelect();
             populateMerchantSelects();
+            populateRoomSelect();
             safeCreateIcons();
         });
 
@@ -1053,24 +1040,14 @@
             const submitBtn = document.getElementById('btnLoginSubmit');
 
             try {
-                if (submitBtn) {
-                    submitBtn.disabled = true;
-                    submitBtn.textContent = 'جارٍ التحقق...';
-                }
-                const userCredential = await auth.signInWithEmailAndPassword(email, pass);
-                currentUser = userCredential.user;
+                if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'جارٍ التحقق...'; }
+                await auth.signInWithEmailAndPassword(email, pass);
                 closeLoginModal();
-                showToast('تم تسجيل الدخول بنجاح');
+                showToast('تم تسجيل الدخول بنجاح عبر سحابة Firebase');
             } catch (error) {
-                if (errDiv) {
-                    errDiv.textContent = "البريد الإلكتروني أو كلمة المرور غير صحيحة.";
-                    errDiv.classList.remove('hidden');
-                }
+                if (errDiv) { errDiv.textContent = "البريد الإلكتروني أو كلمة المرور غير صحيحة."; errDiv.classList.remove('hidden'); }
             } finally {
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.textContent = 'دخول سحابي';
-                }
+                if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'دخول سحابي'; }
             }
         }
 
@@ -1097,7 +1074,7 @@
                 if (!s) return;
                 s.innerHTML = '';
                 brandsData.forEach(b => {
-                    const opt = document.option ? document.createElement('option') : document.createElement('option');
+                    const opt = document.createElement('option');
                     opt.value = b;
                     opt.textContent = b;
                     s.appendChild(opt);
@@ -1108,13 +1085,11 @@
         function populateDriverSelect() {
             const sel = document.getElementById('dispDriverSelect');
             if (!sel) return;
-            sel.innerHTML = '<option value="">-- اختر السائق --</option>';
-            // Add drivers
-            const drivers = ["أبو حسين", "أبو عدي", "أبو رمضان", "أبو بلال", "عجاج", "أبو محمود", "أبو شادي", "فادي", "أبو علي", "عدي", "بلال", "شادي", "علي حمود", "محمد"];
-            drivers.forEach(d => {
+            sel.innerHTML = '';
+            driversData.forEach(d => {
                 const opt = document.createElement('option');
-                opt.value = d;
-                opt.textContent = d;
+                opt.value = d.name;
+                opt.textContent = `${d.name} (${d.car})`;
                 sel.appendChild(opt);
             });
         }
@@ -1131,24 +1106,60 @@
             });
         }
 
-        function renderBrandsListTable() {
-            const tbody = document.getElementById('brandsListTableBody');
-            const pills = document.getElementById('brandsPillsContainer');
-            if (pills) {
-                pills.innerHTML = '';
-                brandsData.forEach(b => {
-                    const sp = document.createElement('span');
-                    sp.className = "px-2.5 py-1 rounded-lg bg-[#fdf2e9] text-[#45260a] font-bold border border-[#fae5d3]";
-                    sp.textContent = b;
-                    pills.appendChild(sp);
-                });
-            }
+        function populateRoomSelect() {
+            const sel = document.getElementById('dispSourceRoom');
+            if (!sel) return;
+            sel.innerHTML = '';
+            roomsData.forEach(r => {
+                const opt = document.createElement('option');
+                opt.value = r.room;
+                opt.textContent = `قاعة رقم ${r.room} (حرارة ${r.temp}°C)`;
+                sel.appendChild(opt);
+            });
         }
 
-        function openBrandsModal() { document.getElementById('brandsModal')?.classList.remove('hidden'); }
-        function closeBrandsModal() { document.getElementById('brandsModal')?.classList.add('hidden'); }
-        function openDriverModal() { document.getElementById('driverModal')?.classList.remove('hidden'); }
-        function closeDriverModal() { document.getElementById('driverModal')?.classList.add('hidden'); }
+        function renderRipeningRooms() {
+            const container = document.getElementById('roomsGridContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            let totalBoxes = 0;
+            roomsData.forEach(r => {
+                const roomSum = r.items.reduce((acc, it) => acc + it.qty, 0);
+                totalBoxes += roomSum;
+                const card = document.createElement('div');
+                card.className = "omni-card p-5 flex flex-col justify-between";
+                card.innerHTML = `
+                    <div>
+                        <div class="flex items-center justify-between pb-3 border-b border-[#fae5d3]">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-9 h-9 rounded-xl bg-[#fdf2e9] text-[#e67e22] flex items-center justify-center font-black text-sm font-num">${r.room}</div>
+                                <div>
+                                    <h3 class="font-bold text-[#333] text-sm">القاعة ${r.room}</h3>
+                                    <span class="text-[10px] text-[#888] font-num font-bold">${r.temp}°C</span>
+                                </div>
+                            </div>
+                            <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#fae5d3] text-[#cf711f]">قيد التخمير</span>
+                        </div>
+                        <div class="space-y-1.5 my-2.5">
+                            ${r.items.map(it => `
+                                <div class="flex items-center justify-between p-2 bg-[#fdfaf7] rounded-xl border border-[#fae5d3]/60 text-xs">
+                                    <span class="font-bold text-[#333]">${it.brand}</span>
+                                    <span class="font-num font-black text-[#e67e22]">${it.qty.toLocaleString()} كرتونة</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div class="pt-3 border-t border-[#fae5d3] flex items-center justify-between text-xs">
+                        <span class="text-[#888] font-bold">مجموع القاعة:</span>
+                        <span class="font-num font-black text-[#333] text-sm">${roomSum.toLocaleString()} كرتونة</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            document.getElementById('roomsTotalBadge').textContent = totalBoxes.toLocaleString();
+            document.getElementById('headerStockBadge').textContent = totalBoxes.toLocaleString() + ' طرد';
+            safeCreateIcons();
+        }
 
         const WAREHOUSE_DOC_REF = db.collection("warehouse_data").doc("current_state");
 
@@ -1173,9 +1184,9 @@
         WAREHOUSE_DOC_REF.onSnapshot(doc => {
             if (doc.exists) {
                 const data = doc.data();
-                if (data.inboundData) inboundData = data.inboundData;
-                if (data.dispatchData) dispatchData = data.dispatchData;
-                if (data.movementData) movementData = data.movementData;
+                if (data.inboundData && data.inboundData.length > 0) inboundData = data.inboundData;
+                if (data.dispatchData && data.dispatchData.length > 0) dispatchData = data.dispatchData;
+                if (data.movementData && data.movementData.length > 0) movementData = data.movementData;
                 renderInboundTable();
                 renderDispatchTable();
                 renderMovementTable();
@@ -1194,13 +1205,14 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             updateCalendarDateDisplay(globalSelectedDate);
+            renderRipeningRooms();
             renderInboundTable();
             renderDispatchTable();
             renderMovementTable();
-            renderBrandsListTable();
             populateBrandSelects();
             populateDriverSelect();
             populateMerchantSelects();
+            populateRoomSelect();
             safeCreateIcons();
         });
     </script>
